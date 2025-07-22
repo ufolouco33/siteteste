@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Testes de Segurança AVANÇADOS do Navegador do Console</title>
+    <title>Teste Final de Segurança do Navegador do Console</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,14 +18,20 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         h1 {
-            color: #cc0000; /* Vermelho para indicar testes mais sérios */
+            color: #8B0000; /* Dark Red for final test */
+        }
+        h2 {
+            color: #444;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 30px;
         }
         button {
             padding: 10px 15px;
             margin: 5px;
             border: none;
             border-radius: 5px;
-            background-color: #dc3545; /* Vermelho mais escuro para botões de risco */
+            background-color: #dc3545; /* Vermelho para botões de ação */
             color: white;
             cursor: pointer;
             font-size: 16px;
@@ -44,7 +50,7 @@
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            width: calc(70% - 10px); /* Ajuste para espaçamento */
+            width: calc(70% - 10px);
             box-sizing: border-box;
             margin-bottom: 5px;
         }
@@ -101,12 +107,34 @@
     <div class="container">
         <button class="refresh-button" onclick="location.reload()">🔄 Atualizar Página</button>
 
-        <h1>⚠️ Testes de Segurança AVANÇADOS do Navegador do Console ⚠️</h1>
-        <p>Estes testes exploram cenários mais agressivos e complexos no navegador do seu console. **Prossiga com cautela.**</p>
+        <h1>✨ Teste Final de Segurança do Navegador do Console ✨</h1>
+        <p>Este arquivo contém todos os testes que realizamos. Clique nos botões e observe o comportamento do console e do log.</p>
 
         ---
 
-        <h2>1. Teste de Fragmentação de Memória e Objetos Pesados</h2>
+        <h2>1. Teste de Injeção de Conteúdo (XSS Básico)</h2>
+        <p>Tente injetar tags HTML/Script na caixa de texto. Elas devem ser sanitizadas ou exibidas como texto puro.</p>
+        <input type="text" id="userInput" placeholder='Ex: <script>alert("XSS!");</script>'>
+        <button onclick="displayInput()">Exibir Entrada</button>
+        <div id="outputArea" class="result">Conteúdo:</div>
+
+        ---
+
+        <h2>2. Teste de Loop Infinito (Potencial Congelamento)</h2>
+        <p>Este teste tenta iniciar um loop que consome CPU. Navegadores modernos deveriam detectá-lo e alertar ou travar apenas a aba.</p>
+        <button onclick="startInfiniteLoop()">Iniciar Loop Infinito</button>
+        <div id="loopStatus" class="result">Status do Loop: Aguardando...</div>
+
+        ---
+
+        <h2>3. Teste de Alocação de Memória</h2>
+        <p>Este teste tenta alocar uma grande quantidade de memória (100MB por clique).</p>
+        <button onclick="allocateMemory()">Alocar 100MB de Memória</button>
+        <div id="memoryStatus" class="result">Memória Alocada: 0 MB</div>
+
+        ---
+
+        <h2>4. Teste de Fragmentação de Memória e Objetos Pesados</h2>
         <p>Cria e descarta muitos objetos complexos. Pode levar a lentidão ou travamentos se o coletor de lixo não for eficiente.</p>
         <button onclick="startMemoryFragmentationTest()">Iniciar Teste</button>
         <button onclick="stopMemoryFragmentationTest()">Parar Teste</button>
@@ -114,7 +142,54 @@
 
         ---
 
-        <h2>2. Teste de Carregamento de Recursos Excessivos/Inválidos</h2>
+        <h2>5. Tentativa de Acesso a APIs Restritas</h2>
+        <p>Este teste tenta acessar APIs que o JavaScript de uma página web não deveria ter permissão para acessar (ex: sistema de arquivos local).</p>
+        <button onclick="testRestrictedAPI()">Testar Acesso Restrito</button>
+        <div id="apiStatus" class="result">Status da API: Aguardando...</div>
+
+        ---
+
+        <h2>6. Teste de Redirecionamento Infinito</h2>
+        <p>Este teste tenta redirecionar a página para si mesma infinitamente. Navegadores deveriam detectar e parar.</p>
+        <button onclick="startInfiniteRedirect()">Iniciar Redirecionamento Infinito</button>
+        <div id="redirectStatus" class="result">Status do Redirecionamento: Aguardando...</div>
+
+        ---
+
+        <h2>7. Teste de Manipulação de Cookies e Local Storage</h2>
+        <p>Verifica se cookies e localStorage podem ser definidos e lidos pela mesma origem. Não deve vazar informações.</p>
+        <button onclick="testCookieLocalStorage()">Testar Cookies/Local Storage</button>
+        <div id="cookieStorageStatus" class="result">Status: Aguardando...</div>
+
+        ---
+
+        <h2>8. Teste de Conexões WebSocket para Portas/IPs Incomuns</h2>
+        <p>Tenta abrir WebSockets para portas e IPs que não deveriam ser acessíveis (ex: portas de serviço internas, localhost).</p>
+        <input type="text" id="wsUrl" value="ws://localhost:8080" placeholder="Ex: ws://127.0.0.1:8080">
+        <button onclick="testWebSocket()">Conectar WebSocket</button>
+        <div id="wsStatus" class="result">Status: Aguardando...</div>
+
+        ---
+
+        <h2>9. Teste de Carregamento de Recurso Cross-Origin (CORS)</h2>
+        <p>Tenta carregar uma imagem de um domínio externo que pode ter políticas CORS restritivas ou que não existe.</p>
+        <input type="text" id="imageUrl" value="https://this-domain-should-not-exist-12345.com/nonexistent.png" placeholder="Ex: https://example.com/image.png">
+        <button onclick="testCORSImage()">Carregar Imagem CORS</button>
+        <div id="corsStatus" class="result">Status: Aguardando...</div>
+        <div id="corsImageContainer"></div>
+
+        ---
+
+        <h2>10. Teste de Estresse Gráfico (Canvas Animado)</h2>
+        <p>Desenha animações complexas em um canvas para estressar o motor de renderização do navegador.</p>
+        <button onclick="startGraphicsStress()">Iniciar Estresse Gráfico</button>
+        <button onclick="stopGraphicsStress()">Parar Estresse Gráfico</button>
+        <canvas id="graphicsCanvas" width="400" height="200" style="border: 1px solid black; background-color: #eee;"></canvas>
+        <div id="graphicsStatus" class="result">Status: Inativo</div>
+
+        ---
+
+        <h2>11. Teste de Carregamento de Recursos Excessivos/Inválidos</h2>
         <p>Tenta carregar um número absurdo de elementos HTML (imagens, divs) ou recursos inválidos. Observar consumo de CPU/Memória.</p>
         <input type="number" id="numElements" value="10000" min="1000" max="100000" step="1000">
         <button onclick="loadExcessiveElements()">Carregar Elementos HTML</button>
@@ -124,7 +199,7 @@
 
         ---
 
-        <h2>3. Teste de Web Workers (Processamento em Segundo Plano)</h2>
+        <h2>12. Teste de Web Workers (Processamento em Segundo Plano)</h2>
         <p>Inicia um Web Worker para fazer cálculos pesados. Verifica se o navegador continua responsivo e se o worker é isolado.</p>
         <button onclick="startWorkerStress()">Iniciar Worker Stress</button>
         <button onclick="stopWorkerStress()">Parar Worker Stress</button>
@@ -132,34 +207,26 @@
 
         ---
 
-        <h2>4. Teste de Exaustão de Conexões de Rede (WebSockets)</h2>
+        <h2>13. Teste de Exaustão de Conexões de Rede (WebSockets)</h2>
         <p>Tenta abrir e manter um grande número de conexões WebSocket. Pode esgotar limites de conexão do sistema.</p>
-        <input type="number" id="numWebsockets" value="500" min="10" max="2000" step="10">
+        <input type="number" id="numWebsocketsExhaust" value="500" min="10" max="2000" step="10">
         <button onclick="startWebSocketExhaustion()">Iniciar Exaustão WS</button>
         <button onclick="closeAllWebSockets()">Fechar Todos WS</button>
         <div id="wsExhaustStatus" class="result">Status: Inativo</div>
 
         ---
 
-        <h2>5. Teste de Iframe Sandbox Bypass</h2>
+        <h2>14. Teste de Iframe Sandbox Bypass</h2>
         <p>Carrega iframes com diferentes atributos de sandbox. Verifique se o conteúdo do iframe pode quebrar o isolamento.</p>
         <button onclick="testIframeSandbox()">Testar Iframes</button>
         <div id="iframeSandboxStatus" class="result">Status: Aguardando...</div>
 
         ---
 
-        <h2>6. Teste de Estresse Gráfico (Canvas Animado)</h2>
-        <p>Desenha animações complexas em um canvas para estressar o motor de renderização do navegador.</p>
-        <button onclick="startGraphicsStress()">Iniciar Estresse Gráfico</button>
-        <button onclick="stopGraphicsStress()">Parar Estresse Gráfico</button>
-        <canvas id="graphicsCanvas" width="400" height="200" style="border: 1px solid black; background-color: #eee;"></canvas>
-        <div id="graphicsStatus" class="result">Status: Inativo</div>
-
-        ---
-
         <div class="test-area">
-            <h2>7. Teste de Violação de Content Security Policy (CSP) - Imagem</h2>
-            <p>Tenta carregar uma imagem de um domínio que provavelmente bloquearia por CSP (se implementado).</p>
+            <h2>15. Teste de Violação de Content Security Policy (CSP) - Imagem (Inline)</h2>
+            <p>Tenta carregar uma imagem de um domínio que provavelmente bloquearia por CSP (se implementado) ou que não existe.
+               *NÃO CLICAR, AÇÃO AUTOMÁTICA*</p>
             <img src="https://evil.example.com/image.png" width="1" height="1" onerror="this.style.visibility='visible'; this.alt='Falhou ao carregar (CSP?)'">
             <div class="test-result">Resultado: A imagem acima deveria falhar ao carregar se o CSP estiver bloqueando domínios externos. Se aparecer um "X" ou um texto alternativo, pode indicar um bloqueio.</div>
         </div>
@@ -167,8 +234,8 @@
         ---
 
         <div class="test-area">
-            <h2>8. Teste de Violação de Content Security Policy (CSP) - Script (Inline)</h2>
-            <p>Tenta executar um script inline (que pode ser bloqueado por CSP).</p>
+            <h2>16. Teste de Violação de Content Security Policy (CSP) - Script (Inline)</h2>
+            <p>Tenta executar um script inline (que pode ser bloqueado por CSP). *NÃO CLICAR, AÇÃO AUTOMÁTICA*</p>
             <script>
                 // Este script provavelmente não executará se o CSP for estrito e bloquear 'unsafe-inline'
                 try {
@@ -190,8 +257,8 @@
         ---
 
         <div class="test-area">
-            <h2>9. Teste de URL Malformada</h2>
-            <p>Tenta carregar uma imagem com uma URL intencionalmente malformada.</p>
+            <h2>17. Teste de URL Malformada (Imagem)</h2>
+            <p>Tenta carregar uma imagem com uma URL intencionalmente malformada. *NÃO CLICAR, AÇÃO AUTOMÁTICA*</p>
             <img src="htp://inval!d-url:.com" width="1" height="1" onerror="this.style.visibility='visible'; this.alt='Falhou ao carregar (URL inválida)'">
             <div class="test-result">Resultado: A imagem acima deve falhar ao carregar devido à URL inválida. Observe qualquer erro no navegador.</div>
         </div>
@@ -199,8 +266,8 @@
         ---
 
         <div class="test-area">
-            <h2>10. Teste de Carregamento de 'file:///' URL (Acesso Local)</h2>
-            <p>Tenta carregar um recurso usando o protocolo 'file:///'. Navegadores seguros geralmente bloqueiam isso por motivos de segurança.</p>
+            <h2>18. Teste de Carregamento de 'file:///' URL (Acesso Local)</h2>
+            <p>Tenta carregar um recurso usando o protocolo 'file:///'. Navegadores seguros geralmente bloqueiam isso por motivos de segurança. *NÃO CLICAR, AÇÃO AUTOMÁTICA*</p>
             <img src="file:///etc/passwd" width="1" height="1" onerror="this.style.visibility='visible'; this.alt='Falhou ao carregar (file:/// bloqueado)'">
             <div class="test-result">Resultado: A imagem acima DEVE falhar ao carregar. Se carregar (o que é altamente improvável), é uma falha de segurança grave.</div>
         </div>
@@ -208,7 +275,7 @@
         ---
 
         <div class="test-area">
-            <h2>11. Teste de Redirecionamento para Schema Inválido</h2>
+            <h2>19. Teste de Redirecionamento para Schema Inválido</h2>
             <p><a href="inval!dschema:example">Clique aqui para tentar um redirecionamento para um schema inválido.</a></p>
             <div class="test-result">Resultado: Clicar no link não deve fazer nada ou deve exibir um erro do navegador sobre o schema inválido.</div>
         </div>
@@ -216,8 +283,8 @@
         ---
 
         <div class="test-area">
-            <h2>12. Teste de Iframe com Atributo 'srcdoc' (Sem Carregar URL Externa)</h2>
-            <p>Carrega um iframe com conteúdo diretamente no HTML (usando 'srcdoc'). Isso deve funcionar mesmo com restrições de script externo.</p>
+            <h2>20. Teste de Iframe com Atributo 'srcdoc'</h2>
+            <p>Carrega um iframe com conteúdo diretamente no HTML (usando 'srcdoc'). Isso deve funcionar mesmo com restrições de script externo. *NÃO CLICAR, AÇÃO AUTOMÁTICA*</p>
             <iframe width="300" height="100" style="border: 1px solid black;" srcdoc="&lt;html&gt;&lt;body&gt;&lt;h3&gt;Iframe Local&lt;/h3&gt;&lt;p&gt;Conteúdo carregado diretamente.&lt;/p&gt;&lt;script&gt;console.log('Script dentro do srcdoc');&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;">
             </iframe>
             <div class="test-result">Resultado: O iframe acima deve carregar e exibir o texto "Iframe Local". O script dentro pode ou não executar dependendo das restrições.</div>
@@ -230,7 +297,6 @@
     </div>
 
     <script>
-        // Função de log aprimorada
         const consoleLogElement = document.getElementById('consoleLog');
         function log(message, type = 'info') {
             const timestamp = new Date().toLocaleTimeString();
@@ -247,46 +313,99 @@
 
         document.addEventListener('DOMContentLoaded', (event) => {
             log('Página carregada e JavaScript iniciado!', 'info');
+            // Logar o status do JS caso não haja interação visível
+            if (typeof window.location.reload === 'function') {
+                log('location.reload() está disponível.', 'success');
+            } else {
+                log('location.reload() PODE NÃO ESTAR DISPONÍVEL.', 'error');
+            }
         });
 
-        // --- Teste 1: Teste de Fragmentação de Memória e Objetos Pesados ---
+        // --- Teste 1: Injeção de Conteúdo (XSS Básico) ---
+        function displayInput() {
+            const userInput = document.getElementById('userInput').value;
+            const outputArea = document.getElementById('outputArea');
+            log(`Teste 1 (XSS): Entrada bruta: "${userInput}"`, 'info');
+
+            const safeText = document.createTextNode(userInput);
+            outputArea.textContent = 'Conteúdo: ';
+            outputArea.appendChild(safeText);
+
+            log('Teste 1 (XSS): Conteúdo exibido. Verifique se scripts ou tags HTML foram renderizados. Idealmente, NÃO devem ser.', 'success');
+        }
+
+        // --- Teste 2: Loop Infinito (Potencial Congelamento) ---
+        function startInfiniteLoop() {
+            const loopStatus = document.getElementById('loopStatus');
+            log('Teste 2 (Loop): Iniciando loop infinito...', 'info');
+            loopStatus.textContent = 'Status do Loop: Rodando... (Aguardando congelamento ou aviso)';
+            let i = 0;
+            try {
+                const startTime = Date.now();
+                while (Date.now() - startTime < 5000) {
+                    i++;
+                }
+                log('Teste 2 (Loop): Loop terminado. Se seu console travou, isso é um sinal.', 'success');
+                loopStatus.textContent = 'Status do Loop: Terminado.';
+            } catch (e) {
+                log(`Teste 2 (Loop): Erro durante o loop: ${e.message}.`, 'error');
+                loopStatus.textContent = `Status do Loop: Interrompido por erro ou proteção: ${e.message}`;
+            }
+        }
+
+        // --- Teste 3: Alocação de Memória ---
+        let totalAllocatedMB = 0;
+        let allocatedBlocks = [];
+        function allocateMemory() {
+            const memoryStatus = document.getElementById('memoryStatus');
+            const blockSizeMB = 100;
+            const blockSizeBytes = blockSizeMB * 1024 * 1024;
+
+            try {
+                const newBlock = new Uint8Array(blockSizeBytes);
+                allocatedBlocks.push(newBlock);
+                totalAllocatedMB += blockSizeMB;
+                memoryStatus.textContent = `Memória Alocada: ${totalAllocatedMB} MB`;
+                log(`Teste 3 (Memória): Alocados ${blockSizeMB} MB. Total: ${totalAllocatedMB} MB.`, 'info');
+            } catch (e) {
+                log(`Teste 3 (Memória): Falha ao alocar memória: ${e.message}.`, 'error');
+                memoryStatus.textContent = `Memória Alocada: ${totalAllocatedMB} MB (Falha ao alocar mais)`;
+                alert(`Erro de memória: ${e.message}.`);
+            }
+        }
+
+        // --- Teste 4: Fragmentação de Memória e Objetos Pesados ---
         let fragMemInterval;
         let runningFragMemTest = false;
         let generatedObjects = [];
 
         function startMemoryFragmentationTest() {
             if (runningFragMemTest) {
-                log('Teste Fragmentação de Memória já está rodando.', 'info');
+                log('Teste 4 (Frag. Memória) já está rodando.', 'info');
                 return;
             }
             runningFragMemTest = true;
             document.getElementById('fragMemStatus').textContent = 'Status: Gerando e destruindo objetos... Observar lentidão.';
-            log('Teste Frag. Memória: Iniciando...', 'info');
+            log('Teste 4 (Frag. Memória): Iniciando...', 'info');
 
             let counter = 0;
             fragMemInterval = setInterval(() => {
                 try {
                     const bigObject = {
-                        data: new Uint32Array(1024 * 1024 / 4), // 1MB de dados
-                        metadata: {
-                            id: counter++,
-                            timestamp: Date.now(),
-                            randomString: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-                        }
+                        data: new Uint32Array(1024 * 1024 / 4),
+                        metadata: { id: counter++, timestamp: Date.now() }
                     };
                     generatedObjects.push(bigObject);
-
                     if (generatedObjects.length > 200 && generatedObjects.length % 100 === 0) {
                         generatedObjects.splice(0, 50);
-                        log(`Teste Frag. Memória: Gerados ${counter} objetos, ${generatedObjects.length} ativos. Forçando GC...`, 'info');
+                        log(`Teste 4 (Frag. Memória): Gerados ${counter} objetos, ${generatedObjects.length} ativos. Forçando GC...`, 'info');
                     }
                     if (generatedObjects.length > 500) {
                         generatedObjects.splice(0, 100);
                     }
                     document.getElementById('fragMemStatus').textContent = `Status: Gerando e destruindo objetos... Total gerado: ${counter}`;
-
                 } catch (e) {
-                    log(`Teste Frag. Memória: Erro durante a geração: ${e.message}. Parando teste.`, 'error');
+                    log(`Teste 4 (Frag. Memória): Erro durante a geração: ${e.message}. Parando teste.`, 'error');
                     stopMemoryFragmentationTest();
                 }
             }, 50);
@@ -298,47 +417,200 @@
             clearInterval(fragMemInterval);
             generatedObjects = [];
             document.getElementById('fragMemStatus').textContent = 'Status: Parado. Memória liberada.';
-            log('Teste Frag. Memória: Parado. Objetos liberados.', 'success');
+            log('Teste 4 (Frag. Memória): Parado. Objetos liberados.', 'success');
         }
 
-        // --- Teste 2: Teste de Carregamento de Recursos Excessivos/Inválidos ---
+        // --- Teste 5: Tentativa de Acesso a APIs Restritas ---
+        function testRestrictedAPI() {
+            const apiStatus = document.getElementById('apiStatus');
+            log('Teste 5 (API Restrita): Tentando acessar APIs restritas...', 'info');
+            let results = [];
+
+            try {
+                if ('requestFileSystem' in window) {
+                    window.requestFileSystem(window.TEMPORARY, 1024 * 1024, function(fs) {
+                        results.push("FileSystem API: Acesso TEMPORARY concedido (Inesperado).");
+                        log('Teste 5 (API Restrita): FileSystem API acessível. INCOMUM para páginas web.', 'error');
+                    }, function(e) {
+                        results.push(`FileSystem API: Erro de acesso (Esperado): ${e.message}`);
+                        log(`Teste 5 (API Restrita): FileSystem API erro (esperado): ${e.message}`, 'success');
+                    });
+                } else {
+                    results.push("FileSystem API: Não suportada.");
+                    log('Teste 5 (API Restrita): FileSystem API não suportada.', 'info');
+                }
+            } catch (e) {
+                results.push(`FileSystem API: Erro inesperado: ${e.message}`);
+                log(`Teste 5 (API Restrita): FileSystem API erro inesperado: ${e.message}`, 'error');
+            }
+
+            try {
+                if (window.SystemAccess || window.KernelAPI) {
+                    results.push("Objeto de sistema encontrado! Falha grave.");
+                    log('Teste 5 (API Restrita): Objeto de sistema inesperado encontrado! FALHA GRAVE!', 'error');
+                } else {
+                    results.push("Nenhum objeto de sistema detectado (Esperado).");
+                    log('Teste 5 (API Restrita): Nenhum objeto de sistema detectado (esperado).', 'success');
+                }
+            } catch (e) {
+                results.push(`Acesso a objeto de sistema: Erro: ${e.message}`);
+                log(`Teste 5 (API Restrita): Erro ao tentar acessar objeto de sistema: ${e.message}`, 'error');
+            }
+            apiStatus.innerHTML = `Status da API: <pre>${results.join('\n')}</pre>`;
+        }
+
+        // --- Teste 6: Redirecionamento Infinito ---
+        function startInfiniteRedirect() {
+            const redirectStatus = document.getElementById('redirectStatus');
+            log('Teste 6 (Redirecionamento): Tentando redirecionamento infinito...', 'info');
+            redirectStatus.textContent = 'Status do Redirecionamento: Redirecionando...';
+            setTimeout(() => {
+                window.location.href = window.location.href;
+            }, 100);
+        }
+
+        // --- Teste 7: Manipulação de Cookies e Local Storage ---
+        function testCookieLocalStorage() {
+            const cookieStorageStatus = document.getElementById('cookieStorageStatus');
+            log('Teste 7 (Cookie/Storage): Tentando definir e ler cookies e localStorage...', 'info');
+            let successCount = 0;
+            let failureCount = 0;
+            let results = [];
+
+            try {
+                document.cookie = "testCookie=consoleTest; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+                const readCookie = document.cookie;
+                if (readCookie.includes("testCookie=consoleTest")) {
+                    results.push("Cookie: Definido e lido com sucesso.");
+                    successCount++;
+                } else {
+                    results.push("Cookie: Falha ao definir ou ler.");
+                    failureCount++;
+                }
+            } catch (e) { results.push(`Cookie: Erro: ${e.message}`); failureCount++; }
+
+            try {
+                localStorage.setItem("testLocalStorage", "consoleLocalStorageTest");
+                const readLocalStorage = localStorage.getItem("testLocalStorage");
+                if (readLocalStorage === "consoleLocalStorageTest") {
+                    results.push("Local Storage: Definido e lido com sucesso.");
+                    successCount++;
+                } else {
+                    results.push("Local Storage: Falha ao definir ou ler.");
+                    failureCount++;
+                }
+                localStorage.removeItem("testLocalStorage");
+            } catch (e) { results.push(`Local Storage: Erro: ${e.message}`); failureCount++; }
+
+            cookieStorageStatus.innerHTML = `Status: <pre>${results.join('\n')}</pre>`;
+            if (successCount > 0 && failureCount === 0) {
+                log('Teste 7 (Cookie/Storage): Comportamento esperado (funcionalidade básica de armazenamento).', 'success');
+            } else {
+                log('Teste 7 (Cookie/Storage): Concluído com falhas. Investigar se há problemas de permissão ou sandbox.', 'error');
+            }
+        }
+
+        // --- Teste 8: Conexões WebSocket para Portas/IPs Incomuns ---
+        function testWebSocket() {
+            const wsUrlInput = document.getElementById('wsUrl').value;
+            const wsStatus = document.getElementById('wsStatus');
+            log(`Teste 8 (WebSocket): Tentando conectar a ${wsUrlInput}...`, 'info');
+            wsStatus.textContent = `Status: Conectando a ${wsUrlInput}...`;
+
+            try {
+                const ws = new WebSocket(wsUrlInput);
+                ws.onopen = () => { wsStatus.textContent = `Status: Conectado com sucesso a ${wsUrlInput}. (ATENÇÃO se for IP/porta interna)`; log(`Teste 8 (WebSocket): Conexão aberta.`, 'error'); ws.close(); };
+                ws.onerror = (error) => { wsStatus.textContent = `Status: Erro na conexão com ${wsUrlInput}. (Esperado)`; log(`Teste 8 (WebSocket): Erro na conexão: ${error.message || 'Desconhecido'}. (Esperado)`, 'success'); };
+                ws.onclose = () => { log(`Teste 8 (WebSocket): Conexão fechada.`, 'info'); };
+            } catch (e) {
+                wsStatus.textContent = `Status: Falha ao iniciar WebSocket: ${e.message}.`;
+                log(`Teste 8 (WebSocket): Erro ao iniciar WebSocket: ${e.message}.`, 'error');
+            }
+        }
+
+        // --- Teste 9: Carregamento de Recurso Cross-Origin (CORS) ---
+        function testCORSImage() {
+            const imageUrl = document.getElementById('imageUrl').value;
+            const corsStatus = document.getElementById('corsStatus');
+            const corsImageContainer = document.getElementById('corsImageContainer');
+            corsImageContainer.innerHTML = '';
+
+            log(`Teste 9 (CORS): Tentando carregar imagem de ${imageUrl}...`, 'info');
+            corsStatus.textContent = `Status: Carregando ${imageUrl}...`;
+
+            const img = new Image();
+            img.onload = () => { corsStatus.textContent = `Status: Imagem carregada com sucesso de ${imageUrl}.`; corsImageContainer.appendChild(img); log(`Teste 9 (CORS): Imagem carregada.`, 'success'); };
+            img.onerror = () => { corsStatus.textContent = `Status: Falha ao carregar imagem de ${imageUrl}. (Esperado)`; log(`Teste 9 (CORS): Falha ao carregar imagem. (OK)`, 'success'); };
+            img.src = imageUrl;
+        }
+
+        // --- Teste 10: Estresse Gráfico (Canvas Animado) ---
+        let animationFrameId;
+        let isGraphicsStressRunning = false;
+        function startGraphicsStress() {
+            if (isGraphicsStressRunning) return;
+            isGraphicsStressRunning = true;
+            const canvas = document.getElementById('graphicsCanvas');
+            const ctx = canvas.getContext('2d');
+            const graphicsStatus = document.getElementById('graphicsStatus');
+            log('Teste 10 (Gráfico): Iniciando estresse gráfico...', 'info');
+            graphicsStatus.textContent = 'Status: Rodando... (Observar desempenho e estabilidade)';
+
+            let angle = 0;
+            const draw = () => {
+                try {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    for (let i = 0; i < 50; i++) {
+                        const x = canvas.width / 2 + Math.cos(angle + i * 0.1) * (100 + i * 0.5);
+                        const y = canvas.height / 2 + Math.sin(angle + i * 0.1) * (50 + i * 0.2);
+                        const radius = 5 + Math.sin(angle * 0.5 + i * 0.2) * 3;
+                        ctx.beginPath();
+                        ctx.arc(x, y, radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `hsl(${angle * 10 % 360}, 70%, 50%)`;
+                        ctx.fill();
+                    }
+                    angle += 0.05;
+                    animationFrameId = requestAnimationFrame(draw);
+                } catch (e) {
+                    log(`Teste 10 (Gráfico): Erro durante a renderização: ${e.message}. Parando.`, 'error');
+                    stopGraphicsStress();
+                }
+            };
+            animationFrameId = requestAnimationFrame(draw);
+        }
+
+        function stopGraphicsStress() {
+            if (!isGraphicsStressRunning) return;
+            isGraphicsStressRunning = false;
+            cancelAnimationFrame(animationFrameId);
+            document.getElementById('graphicsStatus').textContent = 'Status: Inativo';
+            log('Teste 10 (Gráfico): Estresse gráfico parado.', 'info');
+        }
+
+        // --- Teste 11: Carregamento de Recursos Excessivos/Inválidos ---
         function loadExcessiveElements() {
             const numElements = parseInt(document.getElementById('numElements').value);
             const elementContainer = document.getElementById('elementContainer');
             const excessiveLoadStatus = document.getElementById('excessiveLoadStatus');
             elementContainer.innerHTML = '';
-            log(`Teste Excesso de Elementos: Carregando ${numElements} elementos HTML...`, 'info');
+            log(`Teste 11 (Elementos): Carregando ${numElements} elementos HTML...`, 'info');
             excessiveLoadStatus.textContent = `Status: Carregando ${numElements} elementos... (Pode travar)`;
 
             let count = 0;
             const startTime = Date.now();
-
             function addElementChunk() {
                 try {
                     const fragment = document.createDocumentFragment();
                     for (let i = 0; i < 1000 && count < numElements; i++) {
                         const div = document.createElement('div');
-                        div.style.width = '1px';
-                        div.style.height = '1px';
-                        div.style.backgroundColor = 'blue';
-                        div.style.display = 'inline-block';
-                        fragment.appendChild(div);
-                        count++;
+                        div.style.width = '1px'; div.style.height = '1px'; div.style.backgroundColor = 'blue'; div.style.display = 'inline-block';
+                        fragment.appendChild(div); count++;
                     }
                     elementContainer.appendChild(fragment);
-
-                    if (count < numElements) {
-                        requestAnimationFrame(addElementChunk);
-                    } else {
-                        const endTime = Date.now();
-                        log(`Teste Excesso de Elementos: Carregados ${numElements} elementos em ${endTime - startTime}ms.`, 'success');
-                        excessiveLoadStatus.textContent = `Status: Carregados ${numElements} elementos. Observar consumo de recursos.`;
-                    }
+                    if (count < numElements) { requestAnimationFrame(addElementChunk); }
+                    else { const endTime = Date.now(); log(`Teste 11 (Elementos): Carregados ${numElements} elementos em ${endTime - startTime}ms.`, 'success'); excessiveLoadStatus.textContent = `Status: Carregados ${numElements} elementos. Observar consumo de recursos.`; }
                     excessiveLoadStatus.textContent = `Status: Carregados ${count}/${numElements} elementos.`;
-                } catch (e) {
-                    log(`Teste Excesso de Elementos: Erro ao adicionar elementos: ${e.message}. Parando.`, 'error');
-                    excessiveLoadStatus.textContent = `Status: ERRO ao carregar elementos: ${e.message}`;
-                }
+                } catch (e) { log(`Teste 11 (Elementos): Erro ao adicionar elementos: ${e.message}. Parando.`, 'error'); excessiveLoadStatus.textContent = `Status: ERRO ao carregar elementos: ${e.message}`; }
             }
             requestAnimationFrame(addElementChunk);
         }
@@ -347,47 +619,31 @@
             const excessiveLoadStatus = document.getElementById('excessiveLoadStatus');
             const elementContainer = document.getElementById('elementContainer');
             elementContainer.innerHTML = '';
-
-            log('Teste Imagem Inválida: Tentando carregar imagem com dados corrompidos...', 'info');
+            log('Teste 11 (Imagem Inválida): Tentando carregar imagem com dados corrompidos...', 'info');
             excessiveLoadStatus.textContent = 'Status: Tentando carregar imagem inválida...';
-
             const img = new Image();
-            img.onload = () => {
-                log('Teste Imagem Inválida: ATENÇÃO! Imagem inválida carregada com sucesso! Isso pode indicar falha no parser de imagem.', 'error');
-                excessiveLoadStatus.textContent = 'Status: Imagem inválida carregada (Problema!)';
-                elementContainer.appendChild(img);
-            };
-            img.onerror = () => {
-                log('Teste Imagem Inválida: Falha ao carregar imagem inválida. (Comportamento esperado)', 'success');
-                excessiveLoadStatus.textContent = 'Status: Falha ao carregar imagem inválida (OK)';
-            };
+            img.onload = () => { log('Teste 11 (Imagem Inválida): ATENÇÃO! Imagem inválida carregada com sucesso!', 'error'); excessiveLoadStatus.textContent = 'Status: Imagem inválida carregada (Problema!)'; elementContainer.appendChild(img); };
+            img.onerror = () => { log('Teste 11 (Imagem Inválida): Falha ao carregar imagem inválida. (Comportamento esperado)', 'success'); excessiveLoadStatus.textContent = 'Status: Falha ao carregar imagem inválida (OK)'; };
             img.src = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBD';
         }
 
-        // --- Teste 3: Teste de Web Workers (Processamento em Segundo Plano) ---
+        // --- Teste 12: Web Workers (Processamento em Segundo Plano) ---
         let worker;
         let workerRunning = false;
         function startWorkerStress() {
-            if (workerRunning) {
-                log('Web Worker já está rodando.', 'info');
-                return;
-            }
+            if (workerRunning) { log('Teste 12 (Web Worker) já está rodando.', 'info'); return; }
             workerRunning = true;
             document.getElementById('workerStatus').textContent = 'Status: Iniciando Web Worker...';
-            log('Teste Web Worker: Iniciando...', 'info');
+            log('Teste 12 (Web Worker): Iniciando...', 'info');
 
             const workerScriptContent = `
                 onmessage = function(e) {
                     if (e.data === 'start') {
                         let result = 0;
                         try {
-                            for (let i = 0; i < 5000000000; i++) {
-                                result += Math.sqrt(i);
-                            }
+                            for (let i = 0; i < 5000000000; i++) { result += Math.sqrt(i); }
                             postMessage('done');
-                        } catch (err) {
-                            postMessage({ type: 'error', message: err.message });
-                        }
+                        } catch (err) { postMessage({ type: 'error', message: err.message }); }
                     }
                 };
             `;
@@ -397,119 +653,83 @@
             worker.onmessage = (e) => {
                 if (e.data === 'done') {
                     document.getElementById('workerStatus').textContent = 'Status: Web Worker terminou o processamento pesado.';
-                    log('Teste Web Worker: Processamento pesado concluído pelo worker.', 'success');
-                    workerRunning = false;
-                    worker.terminate();
+                    log('Teste 12 (Web Worker): Processamento pesado concluído pelo worker.', 'success');
+                    workerRunning = false; worker.terminate();
                 } else if (e.data.type === 'error') {
                     document.getElementById('workerStatus').textContent = `Status: Erro no Web Worker: ${e.data.message}`;
-                    log(`Teste Web Worker: Erro no worker: ${e.data.message}.`, 'error');
-                    workerRunning = false;
-                    worker.terminate();
+                    log(`Teste 12 (Web Worker): Erro no worker: ${e.data.message}.`, 'error');
+                    workerRunning = false; worker.terminate();
                 }
             };
             worker.onerror = (e) => {
                 document.getElementById('workerStatus').textContent = `Status: Erro fatal no Web Worker: ${e.message}`;
-                log(`Teste Web Worker: Erro FATAL no worker: ${e.message}.`, 'error');
+                log(`Teste 12 (Web Worker): Erro FATAL no worker: ${e.message}.`, 'error');
                 workerRunning = false;
             };
-
             worker.postMessage('start');
             document.getElementById('workerStatus').textContent = 'Status: Web Worker rodando cálculo pesado. Navegador deve permanecer responsivo.';
         }
 
         function stopWorkerStress() {
             if (!workerRunning) return;
-            log('Teste Web Worker: Solicitando parada (pode não parar imediatamente se o cálculo for muito pesado)...', 'info');
-            if (worker) {
-                worker.terminate();
-                workerRunning = false;
-                document.getElementById('workerStatus').textContent = 'Status: Web Worker parado (terminado).';
-                log('Teste Web Worker: Worker terminado.', 'success');
-            }
+            log('Teste 12 (Web Worker): Solicitando parada...', 'info');
+            if (worker) { worker.terminate(); workerRunning = false; document.getElementById('workerStatus').textContent = 'Status: Web Worker parado (terminado).'; log('Teste 12 (Web Worker): Worker terminado.', 'success'); }
         }
 
-        // --- Teste 4: Teste de Exaustão de Conexões de Rede (WebSockets) ---
+        // --- Teste 13: Exaustão de Conexões de Rede (WebSockets) ---
         let activeWebSockets = [];
         let wsExhaustionRunning = false;
         function startWebSocketExhaustion() {
-            if (wsExhaustionRunning) {
-                log('Teste Exaustão de WS já está rodando.', 'info');
-                return;
-            }
+            if (wsExhaustionRunning) { log('Teste 13 (Exaustão WS) já está rodando.', 'info'); return; }
             wsExhaustionRunning = true;
-            const numWebsockets = parseInt(document.getElementById('numWebsockets').value);
+            const numWebsockets = parseInt(document.getElementById('numWebsocketsExhaust').value); /* Use o ID correto */
             const wsExhaustStatus = document.getElementById('wsExhaustStatus');
             wsExhaustStatus.textContent = `Status: Abrindo ${numWebsockets} WebSockets...`;
-            log(`Teste Exaustão WS: Tentando abrir ${numWebsockets} conexões...`, 'info');
+            log(`Teste 13 (Exaustão WS): Tentando abrir ${numWebsockets} conexões...`, 'info');
 
             activeWebSockets = [];
-            let openedCount = 0;
-            let errorCount = 0;
-            let closedCount = 0;
-
+            let openedCount = 0; let errorCount = 0; let closedCount = 0;
             const targetWsUrl = 'ws://echo.websocket.events';
 
             for (let i = 0; i < numWebsockets; i++) {
                 try {
                     const ws = new WebSocket(targetWsUrl);
                     activeWebSockets.push(ws);
-
-                    ws.onopen = () => {
-                        openedCount++;
-                        updateWsExhaustStatus();
-                    };
-                    ws.onerror = (e) => {
-                        errorCount++;
-                        updateWsExhaustStatus();
-                    };
-                    ws.onclose = () => {
-                        closedCount++;
-                        updateWsExhaustStatus();
-                    };
-                } catch (e) {
-                    errorCount++;
-                    log(`Teste Exaustão WS: Erro ao iniciar WS ${i}: ${e.message}`, 'error');
-                }
+                    ws.onopen = () => { openedCount++; updateWsExhaustStatus(); };
+                    ws.onerror = (e) => { errorCount++; updateWsExhaustStatus(); };
+                    ws.onclose = () => { closedCount++; updateWsExhaustStatus(); };
+                } catch (e) { errorCount++; log(`Teste 13 (Exaustão WS): Erro ao iniciar WS ${i}: ${e.message}`, 'error'); }
             }
-            log(`Teste Exaustão WS: Tentativa de abrir ${numWebsockets} WebSockets concluída.`, 'success');
-
-            function updateWsExhaustStatus() {
-                wsExhaustStatus.textContent = `Status: Tentando abrir ${numWebsockets}. Abertas: ${openedCount}. Fechadas: ${closedCount}. Erros: ${errorCount}.`;
-            }
+            log(`Teste 13 (Exaustão WS): Tentativa de abrir ${numWebsockets} WebSockets concluída.`, 'success');
+            function updateWsExhaustStatus() { wsExhaustStatus.textContent = `Status: Tentando abrir ${numWebsockets}. Abertas: ${openedCount}. Fechadas: ${closedCount}. Erros: ${errorCount}.`; }
         }
 
         function closeAllWebSockets() {
             if (!wsExhaustionRunning) return;
-            log('Teste Exaustão WS: Fechando todas as conexões WebSocket...', 'info');
-            activeWebSockets.forEach(ws => {
-                if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
-                    ws.close();
-                }
-            });
+            log('Teste 13 (Exaustão WS): Fechando todas as conexões WebSocket...', 'info');
+            activeWebSockets.forEach(ws => { if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) { ws.close(); } });
             activeWebSockets = [];
             wsExhaustionRunning = false;
             document.getElementById('wsExhaustStatus').textContent = 'Status: Todas as conexões WebSocket fechadas.';
-            log('Teste Exaustão WS: Todas as conexões fechadas.', 'success');
+            log('Teste 13 (Exaustão WS): Todas as conexões fechadas.', 'success');
         }
 
-        // --- Teste 5: Teste de Iframe Sandbox Bypass ---
+        // --- Teste 14: Iframe Sandbox Bypass ---
         function testIframeSandbox() {
             const iframeSandboxStatus = document.getElementById('iframeSandboxStatus');
             iframeSandboxStatus.innerHTML = 'Status: Iniciando testes de iframe sandbox...<br>';
-            log('Teste Iframe Sandbox: Iniciando...', 'info');
+            log('Teste 14 (Iframe Sandbox): Iniciando...', 'info');
 
             const testConfigs = [
-                { id: 'iframe1', title: 'Nenhum Sandbox (Perigoso)', sandbox: '' },
-                { id: 'iframe2', title: 'Sandbox Sem Scripts (Esperado que falhe alerta)', sandbox: 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation-by-user-activation' },
-                { id: 'iframe3', title: 'Sandbox Com Scripts (Esperado que mostre alerta)', sandbox: 'allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation-by-user-activation' }
+                { id: 'iframe_none', title: 'Nenhum Sandbox (Perigoso)', sandbox: '' },
+                { id: 'iframe_no_script', title: 'Sandbox Sem Scripts (Esperado que falhe alerta)', sandbox: 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation-by-user-activation' },
+                { id: 'iframe_with_script', title: 'Sandbox Com Scripts (Esperado que mostre alerta)', sandbox: 'allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation-by-user-activation' }
             ];
 
             testConfigs.forEach(config => {
                 const iframe = document.createElement('iframe');
                 iframe.id = config.id;
-                iframe.width = '300';
-                iframe.height = '100';
-                iframe.style.border = '1px solid black';
+                iframe.width = '300'; iframe.height = '100'; iframe.style.border = '1px solid black';
                 iframe.sandbox = config.sandbox;
                 iframe.srcdoc = `
                     <!DOCTYPE html>
@@ -520,87 +740,25 @@
                         <p id="message">Teste...</p>
                         <script>
                             try {
-                                if (window.parent !== window) {
-                                    document.getElementById('message').textContent += ' | Acesso ao parent OK.';
-                                } else {
-                                    document.getElementById('message').textContent += ' | Acesso ao parent BLOQUEADO (Esperado com sandbox).';
-                                }
+                                if (window.parent !== window) { document.getElementById('message').textContent += ' | Acesso ao parent OK.'; }
+                                else { document.getElementById('message').textContent += ' | Acesso ao parent BLOQUEADO (Esperado).'; }
                                 setTimeout(() => { alert('${config.title} - Script Executado!'); }, 500);
                                 document.getElementById('message').textContent += ' | Alerta agendado.';
-                            } catch (e) {
-                                document.getElementById('message').textContent += ' | Erro no script: ' + e.message;
-                            }
+                            } catch (e) { document.getElementById('message').textContent += ' | Erro no script: ' + e.message; }
                         </script>
                     </body>
                     </html>
                 `;
 
-                iframe.onload = () => {
-                    log(`Iframe ${config.title}: Carregado.`, 'info');
-                    try {
-                        const iframeDoc = iframe.contentWindow.document;
-                        const messageElement = iframeDoc.getElementById('message');
-                        log(`Iframe ${config.title}: Mensagem interna: "${messageElement ? messageElement.textContent : 'Não acessível'}"`, 'info');
-                    } catch (e) {
-                        log(`Iframe ${config.title}: Bloqueado pelo Same-Origin Policy (esperado para sandbox sem allow-same-origin). Erro: ${e.message}`, 'success');
-                    }
+                iframe.onload = () => { log(`Teste 14 (Iframe Sandbox) ${config.title}: Carregado.`, 'info');
+                    try { const iframeDoc = iframe.contentWindow.document; const messageElement = iframeDoc.getElementById('message'); log(`Teste 14 (Iframe Sandbox) ${config.title}: Mensagem interna: "${messageElement ? messageElement.textContent : 'Não acessível'}"`, 'info'); }
+                    catch (e) { log(`Teste 14 (Iframe Sandbox) ${config.title}: Bloqueado pelo Same-Origin Policy (esperado). Erro: ${e.message}`, 'success'); }
                 };
-                iframe.onerror = () => {
-                    log(`Iframe ${config.title}: Erro ao carregar.`, 'error');
-                };
-
+                iframe.onerror = () => { log(`Teste 14 (Iframe Sandbox) ${config.title}: Erro ao carregar.`, 'error'); };
                 document.getElementById('iframeSandboxStatus').appendChild(iframe);
                 document.getElementById('iframeSandboxStatus').innerHTML += `<br>`;
             });
-            log('Teste Iframe Sandbox: Testes iniciados. Observe os comportamentos dos iframes.', 'success');
-        }
-
-        // --- Teste 6: Teste de Estresse Gráfico (Canvas Animado) ---
-        let animationFrameId;
-        let isGraphicsStressRunning = false;
-        function startGraphicsStress() {
-            if (isGraphicsStressRunning) return;
-            isGraphicsStressRunning = true;
-
-            const canvas = document.getElementById('graphicsCanvas');
-            const ctx = canvas.getContext('2d');
-            const graphicsStatus = document.getElementById('graphicsStatus');
-            log('Teste Gráfico: Iniciando estresse gráfico...', 'info');
-            graphicsStatus.textContent = 'Status: Rodando... (Observar desempenho e estabilidade)';
-
-            let angle = 0;
-            const draw = () => {
-                try {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                    for (let i = 0; i < 50; i++) {
-                        const x = canvas.width / 2 + Math.cos(angle + i * 0.1) * (100 + i * 0.5);
-                        const y = canvas.height / 2 + Math.sin(angle + i * 0.1) * (50 + i * 0.2);
-                        const radius = 5 + Math.sin(angle * 0.5 + i * 0.2) * 3;
-
-                        ctx.beginPath();
-                        ctx.arc(x, y, radius, 0, Math.PI * 2);
-                        ctx.fillStyle = `hsl(${angle * 10 % 360}, 70%, 50%)`;
-                        ctx.fill();
-                    }
-
-                    angle += 0.05;
-                    animationFrameId = requestAnimationFrame(draw);
-                } catch (e) {
-                    log(`Teste Gráfico: Erro durante a renderização: ${e.message}. Parando.`, 'error');
-                    stopGraphicsStress();
-                }
-            };
-
-            animationFrameId = requestAnimationFrame(draw);
-        }
-
-        function stopGraphicsStress() {
-            if (!isGraphicsStressRunning) return;
-            isGraphicsStressRunning = false;
-            cancelAnimationFrame(animationFrameId);
-            document.getElementById('graphicsStatus').textContent = 'Status: Inativo';
-            log('Teste Gráfico: Estresse gráfico parado.', 'info');
+            log('Teste 14 (Iframe Sandbox): Testes iniciados.', 'success');
         }
     </script>
 </body>
