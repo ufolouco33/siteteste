@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste de Segurança do Console - Por Desenvolvedor</title>
+    <title>Testes de Segurança Abrangentes do Console - Por Desenvolvedor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,6 +33,13 @@
         button:hover {
             background-color: #0056b3;
         }
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(70% - 10px); /* Ajuste para espaçamento */
+            box-sizing: border-box;
+        }
         textarea {
             width: 98%;
             height: 100px;
@@ -47,9 +54,11 @@
             border-radius: 5px;
             white-space: pre-wrap;
             word-wrap: break-word;
+            max-height: 200px;
+            overflow-y: auto;
         }
         .result {
-            margin-top: 20px;
+            margin-top: 10px;
             padding: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -63,18 +72,22 @@
             color: green;
             font-weight: bold;
         }
+        canvas {
+            display: block;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🛠️ Teste de Segurança do Navegador do Console 🛠️</h1>
-        <p>Esta página contém scripts JavaScript para simular algumas condições de teste. Observe o comportamento do seu console.</p>
+        <h1>🛠️ Testes de Segurança do Navegador do Console 🛠️</h1>
+        <p>Esta página contém scripts JavaScript para simular várias condições de teste no navegador do seu console. Observe o comportamento e as mensagens de log abaixo.</p>
 
         ---
 
         <h2>1. Teste de Injeção de Conteúdo (XSS Básico)</h2>
-        <p>Tente injetar tags HTML/Script na caixa de texto abaixo. Elas devem ser sanitizadas ou exibidas como texto puro.</p>
-        <input type="text" id="userInput" placeholder='Ex: <script>alert("XSS!");</script>' style="width: 70%;">
+        <p>Tente injetar tags HTML/Script na caixa de texto. Elas devem ser sanitizadas ou exibidas como texto puro.</p>
+        <input type="text" id="userInput" placeholder='Ex: <script>alert("XSS!");</script>'>
         <button onclick="displayInput()">Exibir Entrada</button>
         <div id="outputArea" class="result">Conteúdo:</div>
 
@@ -108,6 +121,39 @@
 
         ---
 
+        <h2>6. Teste de Manipulação de Cookies e Local Storage</h2>
+        <p>Verifica se cookies e localStorage podem ser definidos e lidos pela mesma origem. Não deve vazar informações.</p>
+        <button onclick="testCookieLocalStorage()">Testar Cookies/Local Storage</button>
+        <div id="cookieStorageStatus" class="result">Status: Aguardando...</div>
+
+        ---
+
+        <h2>7. Teste de Conexões WebSocket para Portas/IPs Incomuns</h2>
+        <p>Tenta abrir WebSockets para portas e IPs que não deveriam ser acessíveis (ex: portas de serviço internas, localhost).</p>
+        <input type="text" id="wsUrl" value="ws://localhost:8080" placeholder="Ex: ws://127.0.0.1:8080">
+        <button onclick="testWebSocket()">Conectar WebSocket</button>
+        <div id="wsStatus" class="result">Status: Aguardando...</div>
+
+        ---
+
+        <h2>8. Teste de Carregamento de Recurso Cross-Origin (CORS)</h2>
+        <p>Tenta carregar uma imagem de um domínio externo que pode ter políticas CORS restritivas ou que não existe.</p>
+        <input type="text" id="imageUrl" value="https://this-domain-should-not-exist-12345.com/nonexistent.png" placeholder="Ex: https://example.com/image.png">
+        <button onclick="testCORSImage()">Carregar Imagem CORS</button>
+        <div id="corsStatus" class="result">Status: Aguardando...</div>
+        <div id="corsImageContainer"></div>
+
+        ---
+
+        <h2>9. Teste de Estresse Gráfico (Canvas Animado)</h2>
+        <p>Desenha animações complexas em um canvas para estressar o motor de renderização do navegador.</p>
+        <button onclick="startGraphicsStress()">Iniciar Estresse Gráfico</button>
+        <button onclick="stopGraphicsStress()">Parar Estresse Gráfico</button>
+        <canvas id="graphicsCanvas" width="400" height="200" style="border: 1px solid black; background-color: #eee;"></canvas>
+        <div id="graphicsStatus" class="result">Status: Inativo</div>
+
+        ---
+
         <h2>Resultados do Console (Log):</h2>
         <pre id="consoleLog"></pre>
     </div>
@@ -132,11 +178,7 @@
             const outputArea = document.getElementById('outputArea');
             log(`Teste XSS: Entrada bruta: "${userInput}"`, 'info');
 
-            // Forma insegura (NÃO USE ISSO EM PRODUÇÃO! Apenas para demonstrar XSS)
-            // outputArea.innerHTML = 'Conteúdo: ' + userInput; // Isso permitiria XSS
-
             // Forma segura (deve ser a prática do seu navegador)
-            // Cria um nó de texto seguro, que não renderiza HTML/JS
             const safeText = document.createTextNode(userInput);
             outputArea.textContent = 'Conteúdo: '; // Limpa antes
             outputArea.appendChild(safeText); // Adiciona o texto de forma segura
@@ -150,14 +192,12 @@
             log('Teste Loop: Iniciando loop infinito...', 'info');
             loopStatus.textContent = 'Status do Loop: Rodando... (Aguardando congelamento ou aviso)';
             let i = 0;
-            // Um loop que tenta simular consumo de CPU. Navegadores modernos tem proteção contra isso.
             try {
-                // `while(true)` direto pode ser otimizado para não travar
-                // Simula um trabalho pesado para tentar exaurir a CPU
                 const startTime = Date.now();
-                while (Date.now() - startTime < 5000) { // Tenta rodar por 5 segundos intensamente
+                // Tenta rodar por 5 segundos intensamente para simular carga de CPU
+                while (Date.now() - startTime < 5000) {
                     i++;
-                    if (i % 1000000 === 0) { // Para evitar congelamento total na maioria dos browsers
+                    if (i % 1000000 === 0) {
                         console.log(`Loop iteração: ${i}`);
                     }
                 }
@@ -176,13 +216,11 @@
             const blockSizeBytes = blockSizeMB * 1024 * 1024; // Converter para bytes
 
             try {
-                // Criar um array de bytes para simular alocação de memória
                 const newBlock = new Uint8Array(blockSizeBytes);
                 allocatedBlocks.push(newBlock);
                 totalAllocatedMB += blockSizeMB;
                 memoryStatus.textContent = `Memória Alocada: ${totalAllocatedMB} MB`;
                 log(`Teste Memória: Alocados ${blockSizeMB} MB. Total: ${totalAllocatedMB} MB.`, 'info');
-                // Se o console/navegador travar ou ficar muito lento, pode ser um problema de gerenciamento de memória.
             } catch (e) {
                 log(`Teste Memória: Falha ao alocar memória: ${e.message}. Memória pode estar cheia ou navegador limitando.`, 'error');
                 memoryStatus.textContent = `Memória Alocada: ${totalAllocatedMB} MB (Falha ao alocar mais)`;
@@ -238,13 +276,162 @@
             const redirectStatus = document.getElementById('redirectStatus');
             log('Teste Redirecionamento: Tentando redirecionamento infinito...', 'info');
             redirectStatus.textContent = 'Status do Redirecionamento: Redirecionando...';
-            // Usa setTimeout para dar tempo de logar antes de redirecionar
             setTimeout(() => {
                 window.location.href = window.location.href; // Redireciona para a própria página
-            }, 100); // Pequeno atraso
-            // Se o navegador não bloquear após algumas tentativas, pode ser um problema.
+            }, 100);
         }
 
+        // --- Teste 6: Manipulação de Cookies e Local Storage ---
+        function testCookieLocalStorage() {
+            const cookieStorageStatus = document.getElementById('cookieStorageStatus');
+            log('Teste Cookie/Storage: Tentando definir e ler cookies e localStorage...', 'info');
+            let successCount = 0;
+            let failureCount = 0;
+            let results = [];
+
+            // Testar Cookies
+            try {
+                document.cookie = "testCookie=consoleTest; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+                const readCookie = document.cookie;
+                if (readCookie.includes("testCookie=consoleTest")) {
+                    results.push("Cookie: Definido e lido com sucesso.");
+                    successCount++;
+                } else {
+                    results.push("Cookie: Falha ao definir ou ler.");
+                    failureCount++;
+                }
+            } catch (e) {
+                results.push(`Cookie: Erro: ${e.message}`);
+                failureCount++;
+            }
+
+            // Testar Local Storage
+            try {
+                localStorage.setItem("testLocalStorage", "consoleLocalStorageTest");
+                const readLocalStorage = localStorage.getItem("testLocalStorage");
+                if (readLocalStorage === "consoleLocalStorageTest") {
+                    results.push("Local Storage: Definido e lido com sucesso.");
+                    successCount++;
+                } else {
+                    results.push("Local Storage: Falha ao definir ou ler.");
+                    failureCount++;
+                }
+                localStorage.removeItem("testLocalStorage"); // Limpa
+            } catch (e) {
+                results.push(`Local Storage: Erro: ${e.message}`);
+                failureCount++;
+            }
+
+            cookieStorageStatus.innerHTML = `Status: <pre>${results.join('\n')}</pre>`;
+            if (successCount > 0 && failureCount === 0) {
+                log('Teste Cookie/Storage: Concluído. Comportamento esperado (funcionalidade básica de armazenamento).', 'success');
+            } else {
+                log('Teste Cookie/Storage: Concluído com falhas. Investigar se há problemas de permissão ou sandbox.', 'error');
+            }
+        }
+
+        // --- Teste 7: Conexões WebSocket para Portas/IPs Incomuns ---
+        function testWebSocket() {
+            const wsUrlInput = document.getElementById('wsUrl').value;
+            const wsStatus = document.getElementById('wsStatus');
+            log(`Teste WebSocket: Tentando conectar a ${wsUrlInput}...`, 'info');
+            wsStatus.textContent = `Status: Conectando a ${wsUrlInput}...`;
+
+            try {
+                const ws = new WebSocket(wsUrlInput);
+
+                ws.onopen = () => {
+                    wsStatus.textContent = `Status: Conectado com sucesso a ${wsUrlInput}. Isso pode ser um problema de segurança se for um IP/porta interna.`;
+                    log(`Teste WebSocket: Conexão WebSocket aberta com ${wsUrlInput}. MUITA ATENÇÃO se essa URL é interna!`, 'error');
+                    ws.close();
+                };
+
+                ws.onmessage = (event) => {
+                    wsStatus.textContent = `Status: Mensagem recebida: ${event.data}`;
+                    log(`Teste WebSocket: Mensagem recebida: ${event.data}`, 'info');
+                };
+
+                ws.onerror = (error) => {
+                    wsStatus.textContent = `Status: Erro na conexão com ${wsUrlInput}. (Esperado se a porta/IP não for pública ou segura)`;
+                    log(`Teste WebSocket: Erro na conexão: ${error.message || 'Desconhecido'}. (Comportamento esperado para IPs/portas internas ou não autorizadas)`, 'success');
+                };
+
+                ws.onclose = () => {
+                    log(`Teste WebSocket: Conexão fechada com ${wsUrlInput}.`, 'info');
+                };
+
+            } catch (e) {
+                wsStatus.textContent = `Status: Falha ao iniciar WebSocket: ${e.message}.`;
+                log(`Teste WebSocket: Erro ao iniciar WebSocket: ${e.message}. (Geralmente indica que a URL não é válida ou é bloqueada)`, 'error');
+            }
+        }
+
+        // --- Teste 8: Teste de Carregamento de Recurso Cross-Origin (CORS) ---
+        function testCORSImage() {
+            const imageUrl = document.getElementById('imageUrl').value;
+            const corsStatus = document.getElementById('corsStatus');
+            const corsImageContainer = document.getElementById('corsImageContainer');
+            corsImageContainer.innerHTML = ''; // Limpa qualquer imagem anterior
+
+            log(`Teste CORS: Tentando carregar imagem de ${imageUrl}...`, 'info');
+            corsStatus.textContent = `Status: Carregando ${imageUrl}...`;
+
+            const img = new Image();
+            img.onload = () => {
+                corsStatus.textContent = `Status: Imagem carregada com sucesso de ${imageUrl}. (Verificar se é uma imagem conhecida e esperada)`;
+                corsImageContainer.appendChild(img);
+                log(`Teste CORS: Imagem carregada com sucesso. Isso é esperado se o domínio de origem permitir.`, 'success');
+            };
+            img.onerror = () => {
+                corsStatus.textContent = `Status: Falha ao carregar imagem de ${imageUrl}. (Esperado para domínios inexistentes ou com CORS restritivo)`;
+                log(`Teste CORS: Falha ao carregar imagem. Isso é um bom sinal se o domínio for desconhecido ou restrito.`, 'success');
+            };
+            img.src = imageUrl;
+        }
+
+        // --- Teste 9: Teste de Estresse Gráfico (Canvas Animado) ---
+        let animationFrameId;
+        let isGraphicsStressRunning = false;
+        function startGraphicsStress() {
+            if (isGraphicsStressRunning) return;
+            isGraphicsStressRunning = true;
+
+            const canvas = document.getElementById('graphicsCanvas');
+            const ctx = canvas.getContext('2d');
+            const graphicsStatus = document.getElementById('graphicsStatus');
+            log('Teste Gráfico: Iniciando estresse gráfico...', 'info');
+            graphicsStatus.textContent = 'Status: Rodando... (Observar desempenho e estabilidade)';
+
+            let angle = 0;
+            const draw = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
+
+                // Desenha círculos em movimento
+                for (let i = 0; i < 50; i++) {
+                    const x = canvas.width / 2 + Math.cos(angle + i * 0.1) * (100 + i * 0.5);
+                    const y = canvas.height / 2 + Math.sin(angle + i * 0.1) * (50 + i * 0.2);
+                    const radius = 5 + Math.sin(angle * 0.5 + i * 0.2) * 3;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${angle * 10 % 360}, 70%, 50%)`;
+                    ctx.fill();
+                }
+
+                angle += 0.05; // Velocidade da animação
+                animationFrameId = requestAnimationFrame(draw); // Solicita o próximo frame
+            };
+
+            animationFrameId = requestAnimationFrame(draw);
+        }
+
+        function stopGraphicsStress() {
+            if (!isGraphicsStressRunning) return;
+            isGraphicsStressRunning = false;
+            cancelAnimationFrame(animationFrameId);
+            document.getElementById('graphicsStatus').textContent = 'Status: Inativo';
+            log('Teste Gráfico: Estresse gráfico parado.', 'info');
+        }
     </script>
 </body>
 </html>
