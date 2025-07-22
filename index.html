@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Testes de Segurança Abrangentes do Console - Por Desenvolvedor</title>
+    <title>Testes de Segurança AVANÇADOS do Console - Por Desenvolvedor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,26 +18,26 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         h1 {
-            color: #0056b3;
+            color: #cc0000; /* Vermelho para indicar testes mais sérios */
         }
         button {
             padding: 10px 15px;
             margin: 5px;
             border: none;
             border-radius: 5px;
-            background-color: #007bff;
+            background-color: #dc3545; /* Vermelho mais escuro para botões de risco */
             color: white;
             cursor: pointer;
             font-size: 16px;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #c82333;
         }
         input[type="text"] {
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            width: calc(70% - 10px); /* Ajuste para espaçamento */
+            width: calc(70% - 10px);
             box-sizing: border-box;
         }
         textarea {
@@ -80,72 +80,54 @@
 </head>
 <body>
     <div class="container">
-        <h1>🛠️ Testes de Segurança do Navegador do Console 🛠️</h1>
-        <p>Esta página contém scripts JavaScript para simular várias condições de teste no navegador do seu console. Observe o comportamento e as mensagens de log abaixo.</p>
+        <h1>⚠️ Testes de Segurança AVANÇADOS do Navegador do Console ⚠️</h1>
+        <p>Estes testes são mais agressivos e podem potencialmente causar instabilidade no navegador ou no console. **Prossiga com cautela.**</p>
 
         ---
 
-        <h2>1. Teste de Injeção de Conteúdo (XSS Básico)</h2>
-        <p>Tente injetar tags HTML/Script na caixa de texto. Elas devem ser sanitizadas ou exibidas como texto puro.</p>
-        <input type="text" id="userInput" placeholder='Ex: <script>alert("XSS!");</script>'>
-        <button onclick="displayInput()">Exibir Entrada</button>
-        <div id="outputArea" class="result">Conteúdo:</div>
+        <h2>1. Teste de Fragmentação de Memória e Objetos Pesados</h2>
+        <p>Cria e descarta muitos objetos complexos. Pode levar a lentidão ou travamentos se o coletor de lixo não for eficiente.</p>
+        <button onclick="startMemoryFragmentationTest()">Iniciar Teste</button>
+        <button onclick="stopMemoryFragmentationTest()">Parar Teste</button>
+        <div id="fragMemStatus" class="result">Status: Inativo</div>
 
         ---
 
-        <h2>2. Teste de Loop Infinito (Potencial Congelamento)</h2>
-        <p>Este teste tenta iniciar um loop que consome CPU. Navegadores modernos deveriam detectá-lo e alertar ou travar apenas a aba.</p>
-        <button onclick="startInfiniteLoop()">Iniciar Loop Infinito</button>
-        <div id="loopStatus" class="result">Status do Loop: Aguardando...</div>
+        <h2>2. Teste de Carregamento de Recursos Excessivos/Inválidos</h2>
+        <p>Tenta carregar um número absurdo de elementos HTML (imagens, divs) ou recursos inválidos. Observar consumo de CPU/Memória.</p>
+        <input type="number" id="numElements" value="10000" min="1000" max="100000" step="1000" style="width: 20%;">
+        <button onclick="loadExcessiveElements()">Carregar Elementos HTML</button>
+        <button onclick="loadInvalidImage()">Carregar Imagem Inválida</button>
+        <div id="excessiveLoadStatus" class="result">Status: Aguardando...</div>
+        <div id="elementContainer"></div>
 
         ---
 
-        <h2>3. Teste de Alocação de Memória</h2>
-        <p>Este teste tenta alocar uma grande quantidade de memória (100MB por clique).</p>
-        <button onclick="allocateMemory()">Alocar 100MB de Memória</button>
-        <div id="memoryStatus" class="result">Memória Alocada: 0 MB</div>
+        <h2>3. Teste de Web Workers (Processamento em Segundo Plano)</h2>
+        <p>Inicia um Web Worker para fazer cálculos pesados. Verifica se o navegador continua responsivo e se o worker é isolado.</p>
+        <button onclick="startWorkerStress()">Iniciar Worker Stress</button>
+        <button onclick="stopWorkerStress()">Parar Worker Stress</button>
+        <div id="workerStatus" class="result">Status: Inativo</div>
 
         ---
 
-        <h2>4. Tentativa de Acesso a APIs Restritas</h2>
-        <p>Este teste tenta acessar APIs que o JavaScript de uma página web não deveria ter permissão para acessar (ex: sistema de arquivos local).</p>
-        <button onclick="testRestrictedAPI()">Testar Acesso Restrito</button>
-        <div id="apiStatus" class="result">Status da API: Aguardando...</div>
+        <h2>4. Teste de Exaustão de Conexões de Rede (WebSockets)</h2>
+        <p>Tenta abrir e manter um grande número de conexões WebSocket. Pode esgotar limites de conexão do sistema.</p>
+        <input type="number" id="numWebsockets" value="500" min="10" max="2000" step="10">
+        <button onclick="startWebSocketExhaustion()">Iniciar Exaustão WS</button>
+        <button onclick="closeAllWebSockets()">Fechar Todos WS</button>
+        <div id="wsExhaustStatus" class="result">Status: Inativo</div>
 
         ---
 
-        <h2>5. Teste de Redirecionamento Infinito</h2>
-        <p>Este teste tenta redirecionar a página para si mesma infinitamente. Navegadores deveriam detectar e parar.</p>
-        <button onclick="startInfiniteRedirect()">Iniciar Redirecionamento Infinito</button>
-        <div id="redirectStatus" class="result">Status do Redirecionamento: Aguardando...</div>
+        <h2>5. Teste de Iframe Sandbox Bypass</h2>
+        <p>Carrega iframes com diferentes atributos de sandbox. Verifique se o conteúdo do iframe pode quebrar o isolamento.</p>
+        <button onclick="testIframeSandbox()">Testar Iframes</button>
+        <div id="iframeSandboxStatus" class="result">Status: Aguardando...</div>
 
         ---
 
-        <h2>6. Teste de Manipulação de Cookies e Local Storage</h2>
-        <p>Verifica se cookies e localStorage podem ser definidos e lidos pela mesma origem. Não deve vazar informações.</p>
-        <button onclick="testCookieLocalStorage()">Testar Cookies/Local Storage</button>
-        <div id="cookieStorageStatus" class="result">Status: Aguardando...</div>
-
-        ---
-
-        <h2>7. Teste de Conexões WebSocket para Portas/IPs Incomuns</h2>
-        <p>Tenta abrir WebSockets para portas e IPs que não deveriam ser acessíveis (ex: portas de serviço internas, localhost).</p>
-        <input type="text" id="wsUrl" value="ws://localhost:8080" placeholder="Ex: ws://127.0.0.1:8080">
-        <button onclick="testWebSocket()">Conectar WebSocket</button>
-        <div id="wsStatus" class="result">Status: Aguardando...</div>
-
-        ---
-
-        <h2>8. Teste de Carregamento de Recurso Cross-Origin (CORS)</h2>
-        <p>Tenta carregar uma imagem de um domínio externo que pode ter políticas CORS restritivas ou que não existe.</p>
-        <input type="text" id="imageUrl" value="https://this-domain-should-not-exist-12345.com/nonexistent.png" placeholder="Ex: https://example.com/image.png">
-        <button onclick="testCORSImage()">Carregar Imagem CORS</button>
-        <div id="corsStatus" class="result">Status: Aguardando...</div>
-        <div id="corsImageContainer"></div>
-
-        ---
-
-        <h2>9. Teste de Estresse Gráfico (Canvas Animado)</h2>
+        <h2>9. Teste de Estresse Gráfico (Canvas Animado) - *Mantido para referência/comparação*</h2>
         <p>Desenha animações complexas em um canvas para estressar o motor de renderização do navegador.</p>
         <button onclick="startGraphicsStress()">Iniciar Estresse Gráfico</button>
         <button onclick="stopGraphicsStress()">Parar Estresse Gráfico</button>
@@ -166,230 +148,303 @@
             if (type === 'error') color = 'red';
             if (type === 'success') color = 'green';
             consoleLogElement.innerHTML += `<span style="color: ${color};">[${timestamp}] ${message}</span>\n`;
-            consoleLogElement.scrollTop = consoleLogElement.scrollHeight; // Auto-scroll
+            consoleLogElement.scrollTop = consoleLogElement.scrollHeight;
         }
 
-        let allocatedBlocks = [];
-        let totalAllocatedMB = 0;
+        // --- Teste 1: Teste de Fragmentação de Memória e Objetos Pesados ---
+        let fragMemInterval;
+        let runningFragMemTest = false;
+        let generatedObjects = [];
 
-        // --- Teste 1: Injeção de Conteúdo (XSS Básico) ---
-        function displayInput() {
-            const userInput = document.getElementById('userInput').value;
-            const outputArea = document.getElementById('outputArea');
-            log(`Teste XSS: Entrada bruta: "${userInput}"`, 'info');
+        function startMemoryFragmentationTest() {
+            if (runningFragMemTest) return;
+            runningFragMemTest = true;
+            document.getElementById('fragMemStatus').textContent = 'Status: Gerando e destruindo objetos... Observar lentidão.';
+            log('Teste Frag. Memória: Iniciando...', 'info');
 
-            // Forma segura (deve ser a prática do seu navegador)
-            const safeText = document.createTextNode(userInput);
-            outputArea.textContent = 'Conteúdo: '; // Limpa antes
-            outputArea.appendChild(safeText); // Adiciona o texto de forma segura
-
-            log('Teste XSS: Conteúdo exibido. Verifique se scripts ou tags HTML foram renderizados. Idealmente, NÃO devem ser.', 'success');
-        }
-
-        // --- Teste 2: Loop Infinito ---
-        function startInfiniteLoop() {
-            const loopStatus = document.getElementById('loopStatus');
-            log('Teste Loop: Iniciando loop infinito...', 'info');
-            loopStatus.textContent = 'Status do Loop: Rodando... (Aguardando congelamento ou aviso)';
-            let i = 0;
-            try {
-                const startTime = Date.now();
-                // Tenta rodar por 5 segundos intensamente para simular carga de CPU
-                while (Date.now() - startTime < 5000) {
-                    i++;
-                    if (i % 1000000 === 0) {
-                        console.log(`Loop iteração: ${i}`);
+            let counter = 0;
+            fragMemInterval = setInterval(() => {
+                // Cria um objeto "pesado"
+                const bigObject = {
+                    data: new Uint32Array(1024 * 1024 / 4), // 1MB de dados
+                    metadata: {
+                        id: counter++,
+                        timestamp: Date.now(),
+                        randomString: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
                     }
-                }
-                log('Teste Loop: Loop terminado (normalmente, o navegador deveria intervir se fosse um loop real).', 'success');
-                loopStatus.textContent = 'Status do Loop: Terminado. (Se seu console travou, isso é um sinal)';
-            } catch (e) {
-                log(`Teste Loop: Erro durante o loop: ${e.message}. Isso pode ser uma proteção do navegador.`, 'error');
-                loopStatus.textContent = `Status do Loop: Interrompido por erro ou proteção: ${e.message}`;
-            }
-        }
-
-        // --- Teste 3: Alocação de Memória ---
-        function allocateMemory() {
-            const memoryStatus = document.getElementById('memoryStatus');
-            const blockSizeMB = 100; // Alocar 100 MB por vez
-            const blockSizeBytes = blockSizeMB * 1024 * 1024; // Converter para bytes
-
-            try {
-                const newBlock = new Uint8Array(blockSizeBytes);
-                allocatedBlocks.push(newBlock);
-                totalAllocatedMB += blockSizeMB;
-                memoryStatus.textContent = `Memória Alocada: ${totalAllocatedMB} MB`;
-                log(`Teste Memória: Alocados ${blockSizeMB} MB. Total: ${totalAllocatedMB} MB.`, 'info');
-            } catch (e) {
-                log(`Teste Memória: Falha ao alocar memória: ${e.message}. Memória pode estar cheia ou navegador limitando.`, 'error');
-                memoryStatus.textContent = `Memória Alocada: ${totalAllocatedMB} MB (Falha ao alocar mais)`;
-                alert(`Erro de memória: ${e.message}. O navegador ou console pode estar com pouca memória ou limitando a alocação.`);
-            }
-        }
-
-        // --- Teste 4: Tentativa de Acesso a APIs Restritas ---
-        function testRestrictedAPI() {
-            const apiStatus = document.getElementById('apiStatus');
-            log('Teste API Restrita: Tentando acessar APIs restritas (ex: sistema de arquivos)...', 'info');
-
-            let results = [];
-
-            // Tentativa 1: Acesso ao sistema de arquivos (File System API - não deve funcionar em páginas comuns)
-            try {
-                if ('requestFileSystem' in window) {
-                    window.requestFileSystem(window.TEMPORARY, 1024 * 1024, function(fs) {
-                        results.push("FileSystem API: Acesso TEMPORARY concedido (Inesperado para páginas web comuns).");
-                        log('Teste API Restrita: FileSystem API acessível. Isso é INCOMUM para páginas web.', 'error');
-                    }, function(e) {
-                        results.push(`FileSystem API: Erro de acesso (Esperado): ${e.message}`);
-                        log(`Teste API Restrita: FileSystem API erro (esperado): ${e.message}`, 'success');
-                    });
-                } else {
-                    results.push("FileSystem API: Não suportada neste navegador.");
-                    log('Teste API Restrita: FileSystem API não suportada.', 'info');
-                }
-            } catch (e) {
-                results.push(`FileSystem API: Erro inesperado: ${e.message}`);
-                log(`Teste API Restrita: FileSystem API erro inesperado: ${e.message}`, 'error');
-            }
-
-            // Tentativa 2: Acessar algo como um objeto global de sistema (exemplo hipotético)
-            try {
-                if (window.SystemAccess || window.KernelAPI) { // Nomes hipotéticos
-                    results.push("Objeto de sistema encontrado! Isso é uma falha grave.");
-                    log('Teste API Restrita: Objeto de sistema inesperado encontrado! FALHA GRAVE!', 'error');
-                } else {
-                    results.push("Nenhum objeto de sistema detectado (Esperado).");
-                    log('Teste API Restrita: Nenhum objeto de sistema detectado (esperado).', 'success');
-                }
-            } catch (e) {
-                results.push(`Acesso a objeto de sistema: Erro: ${e.message}`);
-                log(`Teste API Restrita: Erro ao tentar acessar objeto de sistema: ${e.message}`, 'error');
-            }
-
-            apiStatus.innerHTML = `Status da API: <pre>${results.join('\n')}</pre>`;
-        }
-
-        // --- Teste 5: Redirecionamento Infinito ---
-        function startInfiniteRedirect() {
-            const redirectStatus = document.getElementById('redirectStatus');
-            log('Teste Redirecionamento: Tentando redirecionamento infinito...', 'info');
-            redirectStatus.textContent = 'Status do Redirecionamento: Redirecionando...';
-            setTimeout(() => {
-                window.location.href = window.location.href; // Redireciona para a própria página
-            }, 100);
-        }
-
-        // --- Teste 6: Manipulação de Cookies e Local Storage ---
-        function testCookieLocalStorage() {
-            const cookieStorageStatus = document.getElementById('cookieStorageStatus');
-            log('Teste Cookie/Storage: Tentando definir e ler cookies e localStorage...', 'info');
-            let successCount = 0;
-            let failureCount = 0;
-            let results = [];
-
-            // Testar Cookies
-            try {
-                document.cookie = "testCookie=consoleTest; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
-                const readCookie = document.cookie;
-                if (readCookie.includes("testCookie=consoleTest")) {
-                    results.push("Cookie: Definido e lido com sucesso.");
-                    successCount++;
-                } else {
-                    results.push("Cookie: Falha ao definir ou ler.");
-                    failureCount++;
-                }
-            } catch (e) {
-                results.push(`Cookie: Erro: ${e.message}`);
-                failureCount++;
-            }
-
-            // Testar Local Storage
-            try {
-                localStorage.setItem("testLocalStorage", "consoleLocalStorageTest");
-                const readLocalStorage = localStorage.getItem("testLocalStorage");
-                if (readLocalStorage === "consoleLocalStorageTest") {
-                    results.push("Local Storage: Definido e lido com sucesso.");
-                    successCount++;
-                } else {
-                    results.push("Local Storage: Falha ao definir ou ler.");
-                    failureCount++;
-                }
-                localStorage.removeItem("testLocalStorage"); // Limpa
-            } catch (e) {
-                results.push(`Local Storage: Erro: ${e.message}`);
-                failureCount++;
-            }
-
-            cookieStorageStatus.innerHTML = `Status: <pre>${results.join('\n')}</pre>`;
-            if (successCount > 0 && failureCount === 0) {
-                log('Teste Cookie/Storage: Concluído. Comportamento esperado (funcionalidade básica de armazenamento).', 'success');
-            } else {
-                log('Teste Cookie/Storage: Concluído com falhas. Investigar se há problemas de permissão ou sandbox.', 'error');
-            }
-        }
-
-        // --- Teste 7: Conexões WebSocket para Portas/IPs Incomuns ---
-        function testWebSocket() {
-            const wsUrlInput = document.getElementById('wsUrl').value;
-            const wsStatus = document.getElementById('wsStatus');
-            log(`Teste WebSocket: Tentando conectar a ${wsUrlInput}...`, 'info');
-            wsStatus.textContent = `Status: Conectando a ${wsUrlInput}...`;
-
-            try {
-                const ws = new WebSocket(wsUrlInput);
-
-                ws.onopen = () => {
-                    wsStatus.textContent = `Status: Conectado com sucesso a ${wsUrlInput}. Isso pode ser um problema de segurança se for um IP/porta interna.`;
-                    log(`Teste WebSocket: Conexão WebSocket aberta com ${wsUrlInput}. MUITA ATENÇÃO se essa URL é interna!`, 'error');
-                    ws.close();
                 };
+                generatedObjects.push(bigObject);
 
-                ws.onmessage = (event) => {
-                    wsStatus.textContent = `Status: Mensagem recebida: ${event.data}`;
-                    log(`Teste WebSocket: Mensagem recebida: ${event.data}`, 'info');
-                };
+                // A cada 100 objetos, remove 50 para forçar o coletor de lixo a trabalhar
+                if (generatedObjects.length > 200 && generatedObjects.length % 100 === 0) {
+                    generatedObjects.splice(0, 50); // Remove os primeiros 50
+                    log(`Teste Frag. Memória: Gerados ${counter} objetos, ${generatedObjects.length} ativos. Forçando GC...`, 'info');
+                }
 
-                ws.onerror = (error) => {
-                    wsStatus.textContent = `Status: Erro na conexão com ${wsUrlInput}. (Esperado se a porta/IP não for pública ou segura)`;
-                    log(`Teste WebSocket: Erro na conexão: ${error.message || 'Desconhecido'}. (Comportamento esperado para IPs/portas internas ou não autorizadas)`, 'success');
-                };
+                if (generatedObjects.length > 500) { // Limita o número total de objetos ativos
+                    generatedObjects.splice(0, 100);
+                }
 
-                ws.onclose = () => {
-                    log(`Teste WebSocket: Conexão fechada com ${wsUrlInput}.`, 'info');
-                };
-
-            } catch (e) {
-                wsStatus.textContent = `Status: Falha ao iniciar WebSocket: ${e.message}.`;
-                log(`Teste WebSocket: Erro ao iniciar WebSocket: ${e.message}. (Geralmente indica que a URL não é válida ou é bloqueada)`, 'error');
-            }
+            }, 50); // Cria um objeto a cada 50ms
         }
 
-        // --- Teste 8: Teste de Carregamento de Recurso Cross-Origin (CORS) ---
-        function testCORSImage() {
-            const imageUrl = document.getElementById('imageUrl').value;
-            const corsStatus = document.getElementById('corsStatus');
-            const corsImageContainer = document.getElementById('corsImageContainer');
-            corsImageContainer.innerHTML = ''; // Limpa qualquer imagem anterior
+        function stopMemoryFragmentationTest() {
+            if (!runningFragMemTest) return;
+            runningFragMemTest = false;
+            clearInterval(fragMemInterval);
+            generatedObjects = []; // Limpa todos os objetos
+            document.getElementById('fragMemStatus').textContent = 'Status: Parado. Memória liberada.';
+            log('Teste Frag. Memória: Parado. Objetos liberados.', 'success');
+        }
 
-            log(`Teste CORS: Tentando carregar imagem de ${imageUrl}...`, 'info');
-            corsStatus.textContent = `Status: Carregando ${imageUrl}...`;
+        // --- Teste 2: Teste de Carregamento de Recursos Excessivos/Inválidos ---
+        function loadExcessiveElements() {
+            const numElements = parseInt(document.getElementById('numElements').value);
+            const elementContainer = document.getElementById('elementContainer');
+            const excessiveLoadStatus = document.getElementById('excessiveLoadStatus');
+            elementContainer.innerHTML = ''; // Limpa elementos anteriores
+
+            log(`Teste Excesso de Elementos: Carregando ${numElements} elementos HTML...`, 'info');
+            excessiveLoadStatus.textContent = `Status: Carregando ${numElements} elementos... (Pode travar)`;
+
+            // Usar requestAnimationFrame para evitar congelar o navegador imediatamente
+            let count = 0;
+            const startTime = Date.now();
+
+            function addElementChunk() {
+                const fragment = document.createDocumentFragment();
+                for (let i = 0; i < 1000 && count < numElements; i++) { // Adiciona em chunks de 1000
+                    const div = document.createElement('div');
+                    div.style.width = '1px';
+                    div.style.height = '1px';
+                    div.style.backgroundColor = 'blue';
+                    div.style.display = 'inline-block';
+                    fragment.appendChild(div);
+                    count++;
+                }
+                elementContainer.appendChild(fragment);
+
+                if (count < numElements) {
+                    requestAnimationFrame(addElementChunk);
+                } else {
+                    const endTime = Date.now();
+                    log(`Teste Excesso de Elementos: Carregados ${numElements} elementos em ${endTime - startTime}ms.`, 'success');
+                    excessiveLoadStatus.textContent = `Status: Carregados ${numElements} elementos. Observar consumo de recursos.`;
+                }
+            }
+            requestAnimationFrame(addElementChunk);
+        }
+
+        function loadInvalidImage() {
+            const excessiveLoadStatus = document.getElementById('excessiveLoadStatus');
+            const elementContainer = document.getElementById('elementContainer');
+            elementContainer.innerHTML = ''; // Limpa elementos anteriores
+
+            log('Teste Imagem Inválida: Tentando carregar imagem com dados corrompidos...', 'info');
+            excessiveLoadStatus.textContent = 'Status: Tentando carregar imagem inválida...';
 
             const img = new Image();
             img.onload = () => {
-                corsStatus.textContent = `Status: Imagem carregada com sucesso de ${imageUrl}. (Verificar se é uma imagem conhecida e esperada)`;
-                corsImageContainer.appendChild(img);
-                log(`Teste CORS: Imagem carregada com sucesso. Isso é esperado se o domínio de origem permitir.`, 'success');
+                log('Teste Imagem Inválida: ATENÇÃO! Imagem inválida carregada com sucesso! Isso pode indicar falha no parser de imagem.', 'error');
+                excessiveLoadStatus.textContent = 'Status: Imagem inválida carregada (Problema!)';
+                elementContainer.appendChild(img);
             };
             img.onerror = () => {
-                corsStatus.textContent = `Status: Falha ao carregar imagem de ${imageUrl}. (Esperado para domínios inexistentes ou com CORS restritivo)`;
-                log(`Teste CORS: Falha ao carregar imagem. Isso é um bom sinal se o domínio for desconhecido ou restrito.`, 'success');
+                log('Teste Imagem Inválida: Falha ao carregar imagem inválida. (Comportamento esperado)', 'success');
+                excessiveLoadStatus.textContent = 'Status: Falha ao carregar imagem inválida (OK)';
             };
-            img.src = imageUrl;
+            // Base64 de uma imagem JPEG intencionalmente corrompida (dados incompletos ou inválidos)
+            img.src = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBD'; // Cabeçalho JPEG incompleto
+        }
+
+        // --- Teste 3: Teste de Web Workers (Processamento em Segundo Plano) ---
+        let worker;
+        let workerRunning = false;
+        function startWorkerStress() {
+            if (workerRunning) return;
+            workerRunning = true;
+            document.getElementById('workerStatus').textContent = 'Status: Iniciando Web Worker...';
+            log('Teste Web Worker: Iniciando...', 'info');
+
+            const workerScriptContent = `
+                onmessage = function(e) {
+                    if (e.data === 'start') {
+                        let result = 0;
+                        for (let i = 0; i < 5000000000; i++) { // Loop pesado
+                            result += Math.sqrt(i);
+                        }
+                        postMessage('done');
+                    } else if (e.data === 'stop') {
+                        // Não há um jeito limpo de parar um loop pesado de dentro do worker sem WebAssembly
+                        // Apenas sinaliza que o worker deveria parar
+                    }
+                };
+            `;
+            const blob = new Blob([workerScriptContent], { type: 'application/javascript' });
+            worker = new Worker(URL.createObjectURL(blob));
+
+            worker.onmessage = (e) => {
+                if (e.data === 'done') {
+                    document.getElementById('workerStatus').textContent = 'Status: Web Worker terminou o processamento pesado.';
+                    log('Teste Web Worker: Processamento pesado concluído pelo worker.', 'success');
+                    workerRunning = false;
+                    worker.terminate();
+                }
+            };
+            worker.onerror = (e) => {
+                document.getElementById('workerStatus').textContent = `Status: Erro no Web Worker: ${e.message}`;
+                log(`Teste Web Worker: Erro: ${e.message}. (Observar se o navegador travou)`, 'error');
+                workerRunning = false;
+            };
+
+            worker.postMessage('start');
+            document.getElementById('workerStatus').textContent = 'Status: Web Worker rodando cálculo pesado. Navegador deve permanecer responsivo.';
+        }
+
+        function stopWorkerStress() {
+            if (!workerRunning) return;
+            log('Teste Web Worker: Solicitando parada (pode não parar imediatamente se o cálculo for muito pesado)...', 'info');
+            if (worker) {
+                worker.terminate(); // Tenta terminar o worker
+                workerRunning = false;
+                document.getElementById('workerStatus').textContent = 'Status: Web Worker parado (terminado).';
+                log('Teste Web Worker: Worker terminado.', 'success');
+            }
+        }
+
+        // --- Teste 4: Teste de Exaustão de Conexões de Rede (WebSockets) ---
+        let activeWebSockets = [];
+        let wsExhaustionRunning = false;
+        function startWebSocketExhaustion() {
+            if (wsExhaustionRunning) return;
+            wsExhaustionRunning = true;
+            const numWebsockets = parseInt(document.getElementById('numWebsockets').value);
+            const wsExhaustStatus = document.getElementById('wsExhaustStatus');
+            wsExhaustStatus.textContent = `Status: Abrindo ${numWebsockets} WebSockets...`;
+            log(`Teste Exaustão WS: Tentando abrir ${numWebsockets} conexões...`, 'info');
+
+            activeWebSockets = [];
+            let openedCount = 0;
+            let errorCount = 0;
+
+            // Use um servidor WebSocket real para isso, como 'ws://echo.websocket.events' ou um local de teste
+            // Para um teste simples, podemos usar um endereço que falhe, mas o objetivo é ver o comportamento ao tentar abrir MUITAS.
+            const targetWsUrl = 'ws://echo.websocket.events'; // Um servidor de teste público
+            // const targetWsUrl = 'ws://127.0.0.1:9999'; // Tentar uma porta local não existente para ver o erro
+
+            for (let i = 0; i < numWebsockets; i++) {
+                try {
+                    const ws = new WebSocket(targetWsUrl);
+                    activeWebSockets.push(ws);
+
+                    ws.onopen = () => {
+                        openedCount++;
+                        wsExhaustStatus.textContent = `Status: Conexões abertas: ${openedCount}/${numWebsockets}. Erros: ${errorCount}.`;
+                        // log(`WS ${i} aberto.`, 'info');
+                    };
+                    ws.onerror = (e) => {
+                        errorCount++;
+                        // log(`WS ${i} erro.`, 'error');
+                        wsExhaustStatus.textContent = `Status: Conexões abertas: ${openedCount}/${numWebsockets}. Erros: ${errorCount}.`;
+                    };
+                    ws.onclose = () => {
+                        // log(`WS ${i} fechado.`, 'info');
+                        wsExhaustStatus.textContent = `Status: Conexões abertas: ${openedCount}/${numWebsockets}. Erros: ${errorCount}.`;
+                    };
+                } catch (e) {
+                    errorCount++;
+                    log(`Teste Exaustão WS: Erro ao iniciar WS ${i}: ${e.message}`, 'error');
+                }
+            }
+            log(`Teste Exaustão WS: Tentativa de abrir ${numWebsockets} WebSockets concluída. Observe o console para erros.`, 'success');
+            wsExhaustStatus.textContent = `Status: Tentativa concluída. Conexões abertas: ${openedCount}. Erros: ${errorCount}.`;
+        }
+
+        function closeAllWebSockets() {
+            if (!wsExhaustionRunning) return;
+            log('Teste Exaustão WS: Fechando todas as conexões WebSocket...', 'info');
+            activeWebSockets.forEach(ws => {
+                if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+                    ws.close();
+                }
+            });
+            activeWebSockets = [];
+            wsExhaustionRunning = false;
+            document.getElementById('wsExhaustStatus').textContent = 'Status: Todas as conexões WebSocket fechadas.';
+            log('Teste Exaustão WS: Todas as conexões fechadas.', 'success');
+        }
+
+        // --- Teste 5: Teste de Iframe Sandbox Bypass ---
+        function testIframeSandbox() {
+            const iframeSandboxStatus = document.getElementById('iframeSandboxStatus');
+            iframeSandboxStatus.innerHTML = 'Status: Iniciando testes de iframe sandbox...<br>';
+            log('Teste Iframe Sandbox: Iniciando...', 'info');
+
+            const testConfigs = [
+                { id: 'iframe1', title: 'Nenhum Sandbox (Perigoso)', sandbox: '' },
+                { id: 'iframe2', title: 'Sandbox Básico (Scripts Bloqueados)', sandbox: 'allow-scripts' },
+                { id: 'iframe3', title: 'Sandbox com Restrição Total', sandbox: 'allow-same-origin' }, // Tentativa de simular uma restrição
+                { id: 'iframe4', title: 'Sandbox Sem Top-Navigation', sandbox: 'allow-scripts allow-forms allow-same-origin' }
+            ];
+
+            testConfigs.forEach(config => {
+                const iframe = document.createElement('iframe');
+                iframe.id = config.id;
+                iframe.width = '300';
+                iframe.height = '100';
+                iframe.style.border = '1px solid black';
+                iframe.sandbox = config.sandbox;
+                iframe.srcdoc = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head><title>${config.title}</title></head>
+                    <body>
+                        <h3>${config.title}</h3>
+                        <p id="message">Testando...</p>
+                        <script>
+                            try {
+                                // Tentar acessar o pai (parent)
+                                if (window.parent !== window) {
+                                    document.getElementById('message').textContent += ' | Acesso ao parent OK.';
+                                } else {
+                                    document.getElementById('message').textContent += ' | Acesso ao parent BLOQUEADO (Esperado com sandbox).';
+                                }
+                                // Tentar executar alert (deve ser bloqueado sem allow-scripts)
+                                setTimeout(() => { alert('${config.title} - Script Executado!'); }, 500);
+                                document.getElementById('message').textContent += ' | Alerta agendado.';
+                            } catch (e) {
+                                document.getElementById('message').textContent += ' | Erro no script: ' + e.message;
+                            }
+                            // Tentar navegação top-level
+                            // setTimeout(() => { window.top.location.href = 'https://google.com'; }, 1000);
+                        </script>
+                    </body>
+                    </html>
+                `;
+
+                iframe.onload = () => {
+                    log(`Iframe ${config.title}: Carregado.`, 'info');
+                    try {
+                        // Tentar acessar o conteúdo do iframe a partir do pai
+                        const iframeDoc = iframe.contentWindow.document;
+                        const messageElement = iframeDoc.getElementById('message');
+                        log(`Iframe ${config.title}: Mensagem interna: "${messageElement ? messageElement.textContent : 'Não acessível'}"`, 'info');
+                    } catch (e) {
+                        log(`Iframe ${config.title}: Bloqueado pelo Same-Origin Policy (esperado para sandbox sem allow-same-origin). Erro: ${e.message}`, 'success');
+                    }
+                };
+                iframe.onerror = () => {
+                    log(`Iframe ${config.title}: Erro ao carregar.`, 'error');
+                };
+
+                document.getElementById('iframeSandboxStatus').appendChild(iframe);
+                document.getElementById('iframeSandboxStatus').innerHTML += `<br>`;
+            });
+            log('Teste Iframe Sandbox: Testes iniciados. Observe os comportamentos dos iframes.', 'success');
         }
 
         // --- Teste 9: Teste de Estresse Gráfico (Canvas Animado) ---
+        // Este teste foi mantido do arquivo anterior.
         let animationFrameId;
         let isGraphicsStressRunning = false;
         function startGraphicsStress() {
@@ -404,9 +459,8 @@
 
             let angle = 0;
             const draw = () => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // Desenha círculos em movimento
                 for (let i = 0; i < 50; i++) {
                     const x = canvas.width / 2 + Math.cos(angle + i * 0.1) * (100 + i * 0.5);
                     const y = canvas.height / 2 + Math.sin(angle + i * 0.1) * (50 + i * 0.2);
@@ -418,8 +472,8 @@
                     ctx.fill();
                 }
 
-                angle += 0.05; // Velocidade da animação
-                animationFrameId = requestAnimationFrame(draw); // Solicita o próximo frame
+                angle += 0.05;
+                animationFrameId = requestAnimationFrame(draw);
             };
 
             animationFrameId = requestAnimationFrame(draw);
