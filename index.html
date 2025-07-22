@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Testes de Segurança AVANÇADOS do Console - Por Desenvolvedor</title>
+    <title>Testes de Segurança AVANÇADOS do Navegador do Console</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,14 +18,14 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         h1 {
-            color: #cc0000;
+            color: #cc0000; /* Vermelho para indicar testes mais sérios */
         }
         button {
             padding: 10px 15px;
             margin: 5px;
             border: none;
             border-radius: 5px;
-            background-color: #dc3545;
+            background-color: #dc3545; /* Vermelho mais escuro para botões de risco */
             color: white;
             cursor: pointer;
             font-size: 16px;
@@ -44,9 +44,9 @@
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            width: calc(70% - 10px);
+            width: calc(70% - 10px); /* Ajuste para espaçamento */
             box-sizing: border-box;
-            margin-bottom: 5px; /* Adicionado para espaçamento */
+            margin-bottom: 5px;
         }
         textarea {
             width: 98%;
@@ -84,6 +84,17 @@
             display: block;
             margin-top: 10px;
         }
+        .test-area {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .test-result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -91,7 +102,7 @@
         <button class="refresh-button" onclick="location.reload()">🔄 Atualizar Página</button>
 
         <h1>⚠️ Testes de Segurança AVANÇADOS do Navegador do Console ⚠️</h1>
-        <p>Estes testes são mais agressivos e podem potencialmente causar instabilidade no navegador ou no console. **Prossiga com cautela.**</p>
+        <p>Estes testes exploram cenários mais agressivos e complexos no navegador do seu console. **Prossiga com cautela.**</p>
 
         ---
 
@@ -146,6 +157,74 @@
 
         ---
 
+        <div class="test-area">
+            <h2>7. Teste de Violação de Content Security Policy (CSP) - Imagem</h2>
+            <p>Tenta carregar uma imagem de um domínio que provavelmente bloquearia por CSP (se implementado).</p>
+            <img src="https://evil.example.com/image.png" width="1" height="1" onerror="this.style.visibility='visible'; this.alt='Falhou ao carregar (CSP?)'">
+            <div class="test-result">Resultado: A imagem acima deveria falhar ao carregar se o CSP estiver bloqueando domínios externos. Se aparecer um "X" ou um texto alternativo, pode indicar um bloqueio.</div>
+        </div>
+
+        ---
+
+        <div class="test-area">
+            <h2>8. Teste de Violação de Content Security Policy (CSP) - Script (Inline)</h2>
+            <p>Tenta executar um script inline (que pode ser bloqueado por CSP).</p>
+            <script>
+                // Este script provavelmente não executará se o CSP for estrito e bloquear 'unsafe-inline'
+                try {
+                    console.log("Teste de script inline");
+                    var cspTest = "Inline script tentou rodar.";
+                    var resultElement = document.getElementById('csp-inline-result');
+                    if (resultElement) {
+                        resultElement.textContent = cspTest;
+                    } else {
+                        console.log(cspTest);
+                    }
+                } catch (e) {
+                    console.error("Erro ao tentar executar script inline:", e);
+                }
+            </script>
+            <div id="csp-inline-result" class="test-result">Resultado: Este texto deveria ser substituído se o script inline executar (improvável com CSP estrito).</div>
+        </div>
+
+        ---
+
+        <div class="test-area">
+            <h2>9. Teste de URL Malformada</h2>
+            <p>Tenta carregar uma imagem com uma URL intencionalmente malformada.</p>
+            <img src="htp://inval!d-url:.com" width="1" height="1" onerror="this.style.visibility='visible'; this.alt='Falhou ao carregar (URL inválida)'">
+            <div class="test-result">Resultado: A imagem acima deve falhar ao carregar devido à URL inválida. Observe qualquer erro no navegador.</div>
+        </div>
+
+        ---
+
+        <div class="test-area">
+            <h2>10. Teste de Carregamento de 'file:///' URL (Acesso Local)</h2>
+            <p>Tenta carregar um recurso usando o protocolo 'file:///'. Navegadores seguros geralmente bloqueiam isso por motivos de segurança.</p>
+            <img src="file:///etc/passwd" width="1" height="1" onerror="this.style.visibility='visible'; this.alt='Falhou ao carregar (file:/// bloqueado)'">
+            <div class="test-result">Resultado: A imagem acima DEVE falhar ao carregar. Se carregar (o que é altamente improvável), é uma falha de segurança grave.</div>
+        </div>
+
+        ---
+
+        <div class="test-area">
+            <h2>11. Teste de Redirecionamento para Schema Inválido</h2>
+            <p><a href="inval!dschema:example">Clique aqui para tentar um redirecionamento para um schema inválido.</a></p>
+            <div class="test-result">Resultado: Clicar no link não deve fazer nada ou deve exibir um erro do navegador sobre o schema inválido.</div>
+        </div>
+
+        ---
+
+        <div class="test-area">
+            <h2>12. Teste de Iframe com Atributo 'srcdoc' (Sem Carregar URL Externa)</h2>
+            <p>Carrega um iframe com conteúdo diretamente no HTML (usando 'srcdoc'). Isso deve funcionar mesmo com restrições de script externo.</p>
+            <iframe width="300" height="100" style="border: 1px solid black;" srcdoc="&lt;html&gt;&lt;body&gt;&lt;h3&gt;Iframe Local&lt;/h3&gt;&lt;p&gt;Conteúdo carregado diretamente.&lt;/p&gt;&lt;script&gt;console.log('Script dentro do srcdoc');&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;">
+            </iframe>
+            <div class="test-result">Resultado: O iframe acima deve carregar e exibir o texto "Iframe Local". O script dentro pode ou não executar dependendo das restrições.</div>
+        </div>
+
+        ---
+
         <h2>Resultados do Console (Log):</h2>
         <pre id="consoleLog"></pre>
     </div>
@@ -158,17 +237,14 @@
             let color = 'black';
             if (type === 'error') color = 'red';
             if (type === 'success') color = 'green';
-            // Certifica-se de que o elemento existe antes de tentar manipular
             if (consoleLogElement) {
                 consoleLogElement.innerHTML += `<span style="color: ${color};">[${timestamp}] ${message}</span>\n`;
-                consoleLogElement.scrollTop = consoleLogElement.scrollHeight; // Auto-scroll
+                consoleLogElement.scrollTop = consoleLogElement.scrollHeight;
             } else {
-                // Fallback para console.log se o elemento não for encontrado
                 console.log(`[${timestamp}] ${message}`);
             }
         }
 
-        // Adicionado um log inicial para confirmar que o script está rodando
         document.addEventListener('DOMContentLoaded', (event) => {
             log('Página carregada e JavaScript iniciado!', 'info');
         });
@@ -385,12 +461,10 @@
                     ws.onerror = (e) => {
                         errorCount++;
                         updateWsExhaustStatus();
-                        // log(`WS ${i} erro: ${e.message || 'Desconhecido'}`, 'error'); // Descomentar para logs individuais
                     };
                     ws.onclose = () => {
                         closedCount++;
                         updateWsExhaustStatus();
-                        // log(`WS ${i} fechado.`, 'info'); // Descomentar para logs individuais
                     };
                 } catch (e) {
                     errorCount++;
@@ -426,7 +500,7 @@
 
             const testConfigs = [
                 { id: 'iframe1', title: 'Nenhum Sandbox (Perigoso)', sandbox: '' },
-                { id: 'iframe2', title: 'Sandbox Sem Scripts (Esperado que falhe alerta)', sandbox: 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation-by-user-activation' }, // Removido 'allow-scripts'
+                { id: 'iframe2', title: 'Sandbox Sem Scripts (Esperado que falhe alerta)', sandbox: 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation-by-user-activation' },
                 { id: 'iframe3', title: 'Sandbox Com Scripts (Esperado que mostre alerta)', sandbox: 'allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation-by-user-activation' }
             ];
 
@@ -456,17 +530,6 @@
                             } catch (e) {
                                 document.getElementById('message').textContent += ' | Erro no script: ' + e.message;
                             }
-                            // Tentativa de navegar a janela principal (top-level navigation)
-                            // if (window.top) {
-                            //     try {
-                            //         // Isso só deveria funcionar com allow-top-navigation ou allow-top-navigation-by-user-activation
-                            //         // e geralmente não por script sem user interaction
-                            //         // window.top.location.href = 'https://www.google.com';
-                            //         // document.getElementById('message').textContent += ' | Tentativa de top-navigation.';
-                            //     } catch (e) {
-                            //         document.getElementById('message').textContent += ' | Top-navigation BLOQUEADO (Esperado).';
-                            //     }
-                            // }
                         </script>
                     </body>
                     </html>
@@ -493,7 +556,6 @@
         }
 
         // --- Teste 6: Teste de Estresse Gráfico (Canvas Animado) ---
-        // Este teste foi renumerado de 9 para 6.
         let animationFrameId;
         let isGraphicsStressRunning = false;
         function startGraphicsStress() {
