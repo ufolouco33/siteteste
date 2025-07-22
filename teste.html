@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Segurança do Console - Por Desenvolvedor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0056b3;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        textarea {
+            width: 98%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        pre {
+            background-color: #e2e2e2;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+        .success-message {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ Teste de Segurança do Navegador do Console 🛠️</h1>
+        <p>Esta página contém scripts JavaScript para simular algumas condições de teste. Observe o comportamento do seu console.</p>
+
+        ---
+
+        <h2>1. Teste de Injeção de Conteúdo (XSS Básico)</h2>
+        <p>Tente injetar tags HTML/Script na caixa de texto abaixo. Elas devem ser sanitizadas ou exibidas como texto puro.</p>
+        <input type="text" id="userInput" placeholder='Ex: <script>alert("XSS!");</script>' style="width: 70%;">
+        <button onclick="displayInput()">Exibir Entrada</button>
+        <div id="outputArea" class="result">Conteúdo:</div>
+
+        ---
+
+        <h2>2. Teste de Loop Infinito (Potencial Congelamento)</h2>
+        <p>Este teste tenta iniciar um loop que consome CPU. Navegadores modernos deveriam detectá-lo e alertar ou travar apenas a aba.</p>
+        <button onclick="startInfiniteLoop()">Iniciar Loop Infinito</button>
+        <div id="loopStatus" class="result">Status do Loop: Aguardando...</div>
+
+        ---
+
+        <h2>3. Teste de Alocação de Memória</h2>
+        <p>Este teste tenta alocar uma grande quantidade de memória (100MB por clique).</p>
+        <button onclick="allocateMemory()">Alocar 100MB de Memória</button>
+        <div id="memoryStatus" class="result">Memória Alocada: 0 MB</div>
+
+        ---
+
+        <h2>4. Tentativa de Acesso a APIs Restritas</h2>
+        <p>Este teste tenta acessar APIs que o JavaScript de uma página web não deveria ter permissão para acessar (ex: sistema de arquivos local).</p>
+        <button onclick="testRestrictedAPI()">Testar Acesso Restrito</button>
+        <div id="apiStatus" class="result">Status da API: Aguardando...</div>
+
+        ---
+
+        <h2>5. Teste de Redirecionamento Infinito</h2>
+        <p>Este teste tenta redirecionar a página para si mesma infinitamente. Navegadores deveriam detectar e parar.</p>
+        <button onclick="startInfiniteRedirect()">Iniciar Redirecionamento Infinito</button>
+        <div id="redirectStatus" class="result">Status do Redirecionamento: Aguardando...</div>
+
+        ---
+
+        <h2>Resultados do Console (Log):</h2>
+        <pre id="consoleLog"></pre>
+    </div>
+
+    <script>
+        const consoleLogElement = document.getElementById('consoleLog');
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            let color = 'black';
+            if (type === 'error') color = 'red';
+            if (type === 'success') color = 'green';
+            consoleLogElement.innerHTML += `<span style="color: ${color};">[${timestamp}] ${message}</span>\n`;
+            consoleLogElement.scrollTop = consoleLogElement.scrollHeight; // Auto-scroll
+        }
+
+        let allocatedBlocks = [];
+        let totalAllocatedMB = 0;
+
+        // --- Teste 1: Injeção de Conteúdo (XSS Básico) ---
+        function displayInput() {
+            const userInput = document.getElementById('userInput').value;
+            const outputArea = document.getElementById('outputArea');
+            log(`Teste XSS: Entrada bruta: "${userInput}"`, 'info');
+
+            // Forma insegura (NÃO USE ISSO EM PRODUÇÃO! Apenas para demonstrar XSS)
+            // outputArea.innerHTML = 'Conteúdo: ' + userInput; // Isso permitiria XSS
+
+            // Forma segura (deve ser a prática do seu navegador)
+            // Cria um nó de texto seguro, que não renderiza HTML/JS
+            const safeText = document.createTextNode(userInput);
+            outputArea.textContent = 'Conteúdo: '; // Limpa antes
+            outputArea.appendChild(safeText); // Adiciona o texto de forma segura
+
+            log('Teste XSS: Conteúdo exibido. Verifique se scripts ou tags HTML foram renderizados. Idealmente, NÃO devem ser.', 'success');
+        }
+
+        // --- Teste 2: Loop Infinito ---
+        function startInfiniteLoop() {
+            const loopStatus = document.getElementById('loopStatus');
+            log('Teste Loop: Iniciando loop infinito...', 'info');
+            loopStatus.textContent = 'Status do Loop: Rodando... (Aguardando congelamento ou aviso)';
+            let i = 0;
+            // Um loop que tenta simular consumo de CPU. Navegadores modernos tem proteção contra isso.
+            try {
+                // `while(true)` direto pode ser otimizado para não travar
+                // Simula um trabalho pesado para tentar exaurir a CPU
+                const startTime = Date.now();
+                while (Date.now() - startTime < 5000) { // Tenta rodar por 5 segundos intensamente
+                    i++;
+                    if (i % 1000000 === 0) { // Para evitar congelamento total na maioria dos browsers
+                        console.log(`Loop iteração: ${i}`);
+                    }
+                }
+                log('Teste Loop: Loop terminado (normalmente, o navegador deveria intervir se fosse um loop real).', 'success');
+                loopStatus.textContent = 'Status do Loop: Terminado. (Se seu console travou, isso é um sinal)';
+            } catch (e) {
+                log(`Teste Loop: Erro durante o loop: ${e.message}. Isso pode ser uma proteção do navegador.`, 'error');
+                loopStatus.textContent = `Status do Loop: Interrompido por erro ou proteção: ${e.message}`;
+            }
+        }
+
+        // --- Teste 3: Alocação de Memória ---
+        function allocateMemory() {
+            const memoryStatus = document.getElementById('memoryStatus');
+            const blockSizeMB = 100; // Alocar 100 MB por vez
+            const blockSizeBytes = blockSizeMB * 1024 * 1024; // Converter para bytes
+
+            try {
+                // Criar um array de bytes para simular alocação de memória
+                const newBlock = new Uint8Array(blockSizeBytes);
+                allocatedBlocks.push(newBlock);
+                totalAllocatedMB += blockSizeMB;
+                memoryStatus.textContent = `Memória Alocada: ${totalAllocatedMB} MB`;
+                log(`Teste Memória: Alocados ${blockSizeMB} MB. Total: ${totalAllocatedMB} MB.`, 'info');
+                // Se o console/navegador travar ou ficar muito lento, pode ser um problema de gerenciamento de memória.
+            } catch (e) {
+                log(`Teste Memória: Falha ao alocar memória: ${e.message}. Memória pode estar cheia ou navegador limitando.`, 'error');
+                memoryStatus.textContent = `Memória Alocada: ${totalAllocatedMB} MB (Falha ao alocar mais)`;
+                alert(`Erro de memória: ${e.message}. O navegador ou console pode estar com pouca memória ou limitando a alocação.`);
+            }
+        }
+
+        // --- Teste 4: Tentativa de Acesso a APIs Restritas ---
+        function testRestrictedAPI() {
+            const apiStatus = document.getElementById('apiStatus');
+            log('Teste API Restrita: Tentando acessar APIs restritas (ex: sistema de arquivos)...', 'info');
+
+            let results = [];
+
+            // Tentativa 1: Acesso ao sistema de arquivos (File System API - não deve funcionar em páginas comuns)
+            try {
+                if ('requestFileSystem' in window) {
+                    window.requestFileSystem(window.TEMPORARY, 1024 * 1024, function(fs) {
+                        results.push("FileSystem API: Acesso TEMPORARY concedido (Inesperado para páginas web comuns).");
+                        log('Teste API Restrita: FileSystem API acessível. Isso é INCOMUM para páginas web.', 'error');
+                    }, function(e) {
+                        results.push(`FileSystem API: Erro de acesso (Esperado): ${e.message}`);
+                        log(`Teste API Restrita: FileSystem API erro (esperado): ${e.message}`, 'success');
+                    });
+                } else {
+                    results.push("FileSystem API: Não suportada neste navegador.");
+                    log('Teste API Restrita: FileSystem API não suportada.', 'info');
+                }
+            } catch (e) {
+                results.push(`FileSystem API: Erro inesperado: ${e.message}`);
+                log(`Teste API Restrita: FileSystem API erro inesperado: ${e.message}`, 'error');
+            }
+
+            // Tentativa 2: Acessar algo como um objeto global de sistema (exemplo hipotético)
+            try {
+                if (window.SystemAccess || window.KernelAPI) { // Nomes hipotéticos
+                    results.push("Objeto de sistema encontrado! Isso é uma falha grave.");
+                    log('Teste API Restrita: Objeto de sistema inesperado encontrado! FALHA GRAVE!', 'error');
+                } else {
+                    results.push("Nenhum objeto de sistema detectado (Esperado).");
+                    log('Teste API Restrita: Nenhum objeto de sistema detectado (esperado).', 'success');
+                }
+            } catch (e) {
+                results.push(`Acesso a objeto de sistema: Erro: ${e.message}`);
+                log(`Teste API Restrita: Erro ao tentar acessar objeto de sistema: ${e.message}`, 'error');
+            }
+
+            apiStatus.innerHTML = `Status da API: <pre>${results.join('\n')}</pre>`;
+        }
+
+        // --- Teste 5: Redirecionamento Infinito ---
+        function startInfiniteRedirect() {
+            const redirectStatus = document.getElementById('redirectStatus');
+            log('Teste Redirecionamento: Tentando redirecionamento infinito...', 'info');
+            redirectStatus.textContent = 'Status do Redirecionamento: Redirecionando...';
+            // Usa setTimeout para dar tempo de logar antes de redirecionar
+            setTimeout(() => {
+                window.location.href = window.location.href; // Redireciona para a própria página
+            }, 100); // Pequeno atraso
+            // Se o navegador não bloquear após algumas tentativas, pode ser um problema.
+        }
+
+    </script>
+</body>
+</html>
