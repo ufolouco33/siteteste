@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+:root{
+  --bg:#0f1216;
+  --panel:#151a21;
+  --muted:#8b95a7;
+  --text:#e6ebf3;
+  --accent:#4c8bf5;
+  --border:#222834;
+  --ok:#6dd3a0;
+  --warn:#e6b74a;
+  --danger:#ff5d5d;
+
+  --purple: rgb(112,48,160);
+  --yellow: rgb(255,255,0);
+  --uasg: rgb(0,176,240);
+  --items: rgb(247,202,172);
+  --pregao: rgb(255,229,153);
+  --total-text: rgb(255,0,0);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--text); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif; 
+}
+.container{max-width:1100px;margin:32px auto;padding:0 16px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+header h1{font-size:20px;font-weight:600;margin:0;color:var(--text)}
+
+.form-section,.items-section,.preview-section{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 16px;margin-bottom:18px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.form-section h2,.items-section h2,.preview-section h2{margin:0 0 14px;color:#dbe4ff;font-weight:600}
+
+.form-group{display:flex;gap:12px;align-items:center;margin:10px 0}
+.form-group label{width:130px;color:var(--muted);font-weight:600}
+.form-group input{flex:1;background:#0b0f14;border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px 14px;outline:none}
+.form-group input:focus{border-color:#2a61ff;box-shadow:0 0 0 3px rgba(76,139,245,.15)}
+
+.btn-primary,.btn-secondary{border:1px solid var(--border);background:#0b0f14;color:var(--text);padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:600}
+.btn-primary{background:linear-gradient(135deg,#234cff,#6a88ff);border:none}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-secondary{background:#0b0f14}
+.btn-secondary:hover{background:#121821}
+
+/* Preview document styles */
+.document{background:#fff;color:#111;padding:28px;border-radius:8px}
+.document p{margin:0 0 10px}
+.document .meta{display:flex;flex-wrap:wrap;gap:10px 18px;margin-bottom:16px}
+.document .meta span{font-weight:700}
+
+.badge{padding:4px 8px;border-radius:8px;color:#111;display:inline-block;font-weight:700}
+.form-panel .badge.empresa{color:var(--purple)}
+.form-panel .badge.pregao{background:var(--pregao)}
+.form-panel .badge.uasg{color:var(--uasg)}
+.form-panel .badge.items{color:var(--items)}
+.form-panel .badge.cnpj{background:var(--yellow)}
+
+.table{width:100%;border-collapse:collapse;margin-top:10px}
+.table th,.table td{border:1px solid #ddd;padding:8px;font-size:14px}
+.table th{background:#f3f5f9;text-align:left}
+.table tfoot td{font-weight:800}
+
+.total-extenso{color:#000;font-weight:800}
+
+.inline-grid{display:grid;grid-template-columns:60px 1fr 110px 80px 110px 140px;gap:0}
+.inline-grid > div{border:1px solid #ddd;padding:8px}
+.inline-grid .head{background:#f3f5f9;font-weight:700}
+
+.item-row{display:grid;grid-template-columns:60px 1fr 110px 80px 110px 140px}
+.item-row > div{border:1px solid #ddd;padding:8px}
+
+.controls-row{display:grid;grid-template-columns:60px 1.6fr 100px 120px;gap:8px;margin:6px 0}
+.controls-row input{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px}
+
+.printable{width:210mm;min-height:297mm;margin:auto;background:white;color:#000;padding:18mm 16mm;box-shadow:0 0 0.5cm rgba(0,0,0,.2)}
+
+@media print{
+  .form-section,.items-section,.btn-primary,.btn-secondary,header{display:none}
+  body{background:white}
+  .printable{box-shadow:none;margin:0;width:auto;min-height:auto}
+}
+
+.main-layout{display:grid;grid-template-columns: 1fr 1.1fr;gap:16px}
+.form-panel{display:flex;flex-direction:column;gap:16px}
+.preview-panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:10px}
+.preview-panel h2{margin:0 0 10px}
+.live-preview{min-height:400px}
+
+/* Ensure printable preview fits */
+.live-preview .printable{margin:0}
+
+.form-group .items-input-container{display:flex;flex-direction:column;gap:8px;width:100%}
+.item-number-group{display:flex;gap:8px;align-items:center}
+.item-number-group .item-number-input{flex:0 0 140px;background:#0b0f14;border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px 14px}
+.item-number-group .btn-add-item{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:#1a2230;color:var(--text);cursor:pointer;font-weight:700}
+.item-number-group .btn-add-item:hover{filter:brightness(1.1)}
+
+.actions-section{display:flex;justify-content:center}
+#copy-document{min-width:240px;text-align:center}
